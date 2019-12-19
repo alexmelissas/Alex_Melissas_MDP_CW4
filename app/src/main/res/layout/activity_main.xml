@@ -6,13 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="95dp"
+        android:layout_height="62dp"
+        android:text="Records"
+        tools:layout_editor_absoluteX="216dp"
+        tools:layout_editor_absoluteY="334dp" />
+
+    <Button
+        android:id="@+id/startButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="169dp"
+        android:layout_height="112dp"
+        android:text="Start Workout"
+        tools:layout_editor_absoluteX="121dp"
+        tools:layout_editor_absoluteY="192dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="95dp"
+        android:layout_height="62dp"
+        android:text="Records"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="334dp" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/textView"
+        android:layout_width="109dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginLeft="43dp"
+        android:layout_marginTop="48dp"
+        android:text="Recent Workout:"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <view
+        android:id="@+id/recentList"
+        class="androidx.drawerlayout.widget.DrawerLayout"
+        android:layout_width="328dp"
+        android:layout_height="87dp"
+        tools:layout_editor_absoluteX="43dp"
+        tools:layout_editor_absoluteY="78dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

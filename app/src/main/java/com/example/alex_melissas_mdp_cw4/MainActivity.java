@@ -1,5 +1,6 @@
 package com.example.alex_melissas_mdp_cw4;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -9,12 +10,21 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private String musicFolderPath;
     private Handler progressBarHandler;
     private boolean checkProgress;
+
+    protected DBHelper dbHelper;
+    protected SQLiteDatabase db;
+    protected SimpleCursorAdapter adapter;
+    String sortBy = "datetime";
+
 
     //Standard ServiceConnection with callbacks
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -83,12 +99,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new DBHelper(this);
+        db = dbHelper.getWritableDatabase();
+
         checkStoragePermissions(this);
         musicFolderPath = Environment.getExternalStorageDirectory().getPath() + "/Music/";
 
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),
                 serviceConnection, BIND_AUTO_CREATE);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onResume()
+    {
+//        if(sortBy == "name") ((RadioButton)findViewById(R.id.nameRadio)).setChecked(true);
+//        else ((RadioButton)findViewById(R.id.ratingRadio)).setChecked(true);
+        readRecent();
+        super.onResume();
     }
 
     @Override
@@ -103,4 +132,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /////////////////////////////////// B U T T O N    H A N D L E R S //////////////////////////////////
+
+
+    /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void readRecent() {
+        final ListView recentList = (ListView) findViewById(R.id.recentList);
+        Cursor c = getContentResolver().query(WorkoutsContract.ALL,
+                new String[]{"w_id", "type", "dateTime", "duration", "distance"},
+                null, null, sortBy, null);
+        String[] columns = new String[]{"dateTime", "duration", "distance","w_id"};
+
+        // how to switch image for type of each entry??
+
+        int[] to = new int[]{R.id.datetimeBox, R.id.distanceBox, R.id.durationBox};
+        adapter = new SimpleCursorAdapter(this, R.layout.workout_entry, c, columns, to, 0);
+        recentList.setAdapter(adapter);
+
+        recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, SingleWorkout.class);
+                Bundle bundle = new Bundle();
+
+                Cursor c = ((SimpleCursorAdapter)recentList.getAdapter()).getCursor();
+                c.moveToPosition(i);
+                String recipe_id = c.getString(0);
+
+                bundle.putString("recipe_id", recipe_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
+
 }

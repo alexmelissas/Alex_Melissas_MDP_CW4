@@ -43,7 +43,7 @@ public class MyLocationService extends Service {
         super.onDestroy();
     }
 
-    //public int onStartCommand(Intent intent, int flags, int startId) {return Service.START_STICKY;}
+    public int onStartCommand(Intent intent, int flags, int startId) {return Service.START_STICKY;}
 
     /////////////////////////////////// C A L L B A C K S  ////////////////////////////////////////////
 

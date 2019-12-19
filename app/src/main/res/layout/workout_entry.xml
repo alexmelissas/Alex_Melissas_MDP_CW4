@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false">
+
+    <ImageView
+        android:id="@+id/typeImage"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="2"
+        android:layout_marginLeft="2"
+        android:layout_marginTop="2"
+        android:layout_marginEnd="2"
+        android:layout_marginRight="2"
+        android:layout_marginBottom="2"
+        android:scaleType="centerInside"
+        app:srcCompat="@mipmap/walk_icon" />
+
+    <TextView
+        android:id="@+id/datetimeBox"
+        android:layout_width="178dp"
+        android:layout_height="26dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="0"
+        android:layout_marginRight="205dp"
+        android:clickable="false"
+        android:text="88 Jan 2020 | 88:88"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/durationBox"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_marginLeft="220"
+        android:text="88:88"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/distanceBox"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="273dp"
+        android:layout_marginTop="0"
+        android:layout_marginRight="58dp"
+        android:clickable="false"
+        android:text="88.88km"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/mapButton"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_marginLeft="380"
+        android:layout_marginTop="0"
+        android:textAllCaps="false" />
+
+</RelativeLayout>

@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickWalk(View v){ myLocationBinder.startWorkout(0); }
     public void onClickJog(View v){ myLocationBinder.startWorkout(1); }
     public void onClickRun(View v){ myLocationBinder.startWorkout(2); }
+    public void onClickFav(View v){ Log.d("whore","CLICKED HEART"); }
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -150,30 +151,29 @@ public class MainActivity extends AppCompatActivity {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
         Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS,
                 new String[]{"_id", "type", "dateTime", "duration", "distance"},
-                null, null, sortBy, null);
+                null, null, "datetime DESC", null);
         String[] columns = new String[]{"dateTime", "duration", "distance","_id"};
 
         // how to switch image for type of each entry??
 
-        int[] to = new int[]{R.id.datetimeBox, R.id.distanceBox, R.id.durationBox};
+        int[] to = new int[]{R.id.datetimeBox, R.id.durationBox, R.id.distanceBox};
         adapter = new SimpleCursorAdapter(this, R.layout.workout_entry, c, columns, to, 0);
         recentList.setAdapter(adapter);
 
-//        recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent intent = new Intent(MainActivity.this, SingleWorkout.class);
-//                Bundle bundle = new Bundle();
-//
-//                Cursor c = ((SimpleCursorAdapter)recentList.getAdapter()).getCursor();
-//                c.moveToPosition(i);
-//                String recipe_id = c.getString(0);
-//
-//                bundle.putString("recipe_id", recipe_id);
-//                intent.putExtras(bundle);
-//                startActivity(intent);
-//            }
-//        });
+        recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, SingleWorkout.class);
+                Bundle bundle = new Bundle();
+
+                Cursor c = ((SimpleCursorAdapter)recentList.getAdapter()).getCursor();
+                c.moveToPosition(i);
+                String workout_id = c.getString(0);
+                bundle.putString("workout_id", workout_id);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
 /////////////////////////////////// S E R V I C E   S T U F F ///////////////////////////////////////

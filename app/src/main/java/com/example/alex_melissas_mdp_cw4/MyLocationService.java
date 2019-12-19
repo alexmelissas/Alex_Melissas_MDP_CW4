@@ -116,11 +116,13 @@ public class MyLocationService extends Service {
 
         // 1. Insert new workout, bare-bones for now, just starting date/time.
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy | HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
             String currentDateTime = sdf.format(new Date());
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
             workoutValues.put(WorkoutsContract.TYPE,type);
+            workoutValues.put(WorkoutsContract.DURATION,"08:12");
+            workoutValues.put(WorkoutsContract.DISTANCE,"00.96km");
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             String newWorkoutIdString = "" + newWorkoutId;
 

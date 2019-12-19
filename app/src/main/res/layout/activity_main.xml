@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#00090000"
     tools:context=".MainActivity">
 
     <Button
@@ -12,10 +13,10 @@
         android:layout_height="62dp"
         android:layout_marginStart="28dp"
         android:layout_marginLeft="28dp"
-        android:layout_marginBottom="360dp"
+        android:layout_marginTop="24dp"
         android:text="Records"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/historyButton" />
+        app:layout_constraintStart_toEndOf="@+id/historyButton"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <Button
         android:id="@+id/historyButton"
@@ -23,24 +24,37 @@
         android:layout_height="62dp"
         android:layout_marginStart="88dp"
         android:layout_marginLeft="88dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="23dp"
         android:layout_marginRight="23dp"
-        android:layout_marginBottom="360dp"
         android:text="History"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/recordsButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="109dp"
-        android:layout_height="20dp"
+        android:layout_width="152dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="60dp"
+        android:text="Recent Workouts:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/historyButton" />
+
+    <ListView
+        android:id="@+id/recentList"
+        android:layout_width="356dp"
+        android:layout_height="253dp"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
-        android:layout_marginTop="496dp"
-        android:text="Recent Workout:"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView2"
@@ -57,6 +71,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
@@ -107,19 +122,5 @@
             android:text="Run"
             android:textColor="#fff" />
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/recentList"
-        android:layout_width="327dp"
-        android:layout_height="177dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

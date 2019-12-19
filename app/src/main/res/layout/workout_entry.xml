@@ -8,28 +8,28 @@
 
     <ImageView
         android:id="@+id/typeImage"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="2"
-        android:layout_marginLeft="2"
-        android:layout_marginTop="2"
-        android:layout_marginEnd="2"
-        android:layout_marginRight="2"
-        android:layout_marginBottom="2"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="2dp"
         android:scaleType="centerInside"
-        app:srcCompat="@mipmap/walk_icon" />
+        app:srcCompat="@mipmap/run_icon" />
 
     <TextView
         android:id="@+id/datetimeBox"
-        android:layout_width="178dp"
+        android:layout_width="189dp"
         android:layout_height="26dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="0"
-        android:layout_marginRight="205dp"
+        android:layout_marginLeft="31dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="191dp"
         android:clickable="false"
-        android:text="88 Jan 2020 | 88:88"
+        android:text="88 Jan 2020 @ 88:88"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="20sp"
         android:textStyle="italic" />
@@ -38,7 +38,7 @@
         android:id="@+id/durationBox"
         android:layout_width="wrap_content"
         android:layout_height="26dp"
-        android:layout_marginLeft="220"
+        android:layout_marginLeft="230dp"
         android:text="88:88"
         android:textSize="20sp" />
 
@@ -48,9 +48,9 @@
         android:layout_height="26dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="273dp"
-        android:layout_marginTop="0"
-        android:layout_marginRight="58dp"
+        android:layout_marginLeft="291dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="40dp"
         android:clickable="false"
         android:text="88.88km"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -62,8 +62,8 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="26dp"
-        android:layout_marginLeft="380"
-        android:layout_marginTop="0"
+        android:layout_marginLeft="380dp"
+        android:layout_marginTop="0dp"
         android:textAllCaps="false" />
 
 </RelativeLayout>

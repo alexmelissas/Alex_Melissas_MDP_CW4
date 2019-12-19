@@ -20,13 +20,11 @@ public class WorkoutsProvider extends ContentProvider {
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "walk", 1);
-        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "jog", 2);
-        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "run", 3);
-        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "locations", 4);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workouts", 1);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "locations", 2);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workoutswithlocations", 3);
 
-        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "all", 5);
-        //eg. month eg. check best run of month or month totals/trends etc
+        //uriMatcher.addURI(WorkoutsContract.AUTHORITY, "something else", 4);
     }
 
     @Override
@@ -38,10 +36,9 @@ public class WorkoutsProvider extends ContentProvider {
 
     private String getTableFromUri(@Nullable Uri uri){
         switch(uriMatcher.match(uri)){
-            case 1: return "walk";
-            case 2: return "jog";
-            case 3: return "run";
-            case 4: return "locations";
+            case 1: return "workouts";
+            case 2: return "locations";
+            case 3: return "workoutswithlocations";
             default: return null;
         }
     }
@@ -59,17 +56,15 @@ public class WorkoutsProvider extends ContentProvider {
 
 
         switch(uriMatcher.match(uri)) {
-            case 1: return db.query("walk", projection, selection, selectionArgs, null, null, sortOrder);
-            case 2: return db.query("jog", projection, selection, selectionArgs, null, null, sortOrder);
-            case 3: return db.query("run", projection, selection, selectionArgs, null, null, sortOrder);
-            case 4: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
+            case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
+            case 2: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
+            case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
 
-
-            case 5: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
-                            "from recipes r "+
-                            "join recipe_ingredients ri on (r._id = ri.recipe_id)"+
-                            "join ingredients i on (ri.ingredient_id = i._id) where r._id == ?",
-                    selectionArgs);
+//            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
+//                            "from recipes r "+
+//                            "join recipe_ingredients ri on (r._id = ri.recipe_id)"+
+//                            "join ingredients i on (ri.ingredient_id = i._id) where r._id == ?",
+//                    selectionArgs);
 
             default: return null;
         }
@@ -81,7 +76,6 @@ public class WorkoutsProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName = getTableFromUri(uri);
-
         long id = db.insert(tableName,null,values);
         db.close();
         Uri nu = ContentUris.withAppendedId(uri,id);
@@ -127,7 +121,7 @@ public class WorkoutsProvider extends ContentProvider {
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName = getTableFromUri(uri);
-        long id = db.update(tableName,values,selection,selectionArgs);
+        db.update(tableName,values,selection,selectionArgs);
         db.close();
         return 0;
     }

@@ -12,55 +12,35 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
-                "CREATE TABLE walk ("
+                "CREATE TABLE workouts ("
                         + "_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                        + "type VARCHAR(128) NOT NULL, "
                         + "name VARCHAR(128), "
-                        + "dateTime datetime NOT NULL, "
-                        + "startPos VARCHAR(128) NOT NULL, " //_id of location
-                        + "endPos VARCHAR(128) NOT NULL, "
-                        + "duration INTEGER NOT NULL, "
-                        + "avgSpeed INTEGER NOT NULL, "
+                        + "dateTime VARCHAR(128) NOT NULL, "
+                        + "duration INTEGER, "
+                        + "distance FLOAT, "
+                        + "avgSpeed INTEGER, "
                         + "imgPath VARCHAR(128), "
                         + "liked INTEGER, "
-                        + "fav INTEGER,"
-                        + "rating INTEGER);"
-        );
-
-        db.execSQL(
-                "CREATE TABLE jog ("
-                        + "_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-                        + "name VARCHAR(128), "
-                        + "dateTime datetime NOT NULL, "
-                        + "startPos VARCHAR(128) NOT NULL, "
-                        + "endPos VARCHAR(128) NOT NULL, "
-                        + "duration INTEGER NOT NULL, "
-                        + "avgSpeed INTEGER NOT NULL, "
-                        + "imgPath VARCHAR(128), "
-                        + "liked INTEGER, "
-                        + "fav INTEGER,"
-                        + "rating INTEGER);"
-        );
-
-        db.execSQL(
-                "CREATE TABLE run ("
-                        + "_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-                        + "name VARCHAR(128), "
-                        + "dateTime datetime NOT NULL, "
-                        + "startPos VARCHAR(128) NOT NULL, "
-                        + "endPos VARCHAR(128) NOT NULL, "
-                        + "duration INTEGER NOT NULL, "
-                        + "avgSpeed INTEGER NOT NULL, "
-                        + "imgPath VARCHAR(128), "
-                        + "liked INTEGER, "
-                        + "fav INTEGER,"
-                        + "rating INTEGER);"
+                        + "fav INTEGER );"
         );
 
         db.execSQL(
                 "CREATE TABLE locations ("
                         + "_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
                         + "lon VARCHAR(128) NOT NULL, "
-                        + "lat VARCHAR(128) NOT NULL);"
+                        + "lat VARCHAR(128) NOT NULL );"
+        );
+
+        db.execSQL(
+                "CREATE TABLE workoutswithlocations ("
+                        + "location_id INTEGER NOT NULL, "
+                        + "workout_id INTEGER NOT NULL, "
+                        + "startStopPoint INTEGER NOT NULL, " // boolean 0=start 1=end point of wrkt
+                        + "CONSTRAINT fk1 FOREIGN KEY (workout_id) REFERENCES workouts (_id) ON DELETE CASCADE, "
+                        + "CONSTRAINT fk2 FOREIGN KEY (location_id) REFERENCES locations (_id) ON DELETE CASCADE, "
+                        + "CONSTRAINT _id PRIMARY KEY (workout_id, location_id) );"
+
         );
 
         //Test values

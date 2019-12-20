@@ -23,8 +23,7 @@ public class WorkoutsProvider extends ContentProvider {
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workouts", 1);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "locations", 2);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workoutswithlocations", 3);
-
-        //uriMatcher.addURI(WorkoutsContract.AUTHORITY, "something else", 4);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "recents", 4);
     }
 
     @Override
@@ -59,6 +58,8 @@ public class WorkoutsProvider extends ContentProvider {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
             case 2: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
+            case 4: return db.rawQuery("SELECT _id, type, dateTime, duration, distance " +
+                    "FROM workouts ORDER BY fav DESC, dateTime DESC LIMIT 2",selectionArgs);
 
 //            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
 //                            "from recipes r "+

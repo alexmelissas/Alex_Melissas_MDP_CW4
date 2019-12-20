@@ -68,9 +68,6 @@ public class MainActivity extends AppCompatActivity {
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),
                 serviceConnection, BIND_AUTO_CREATE);
-
-
-
         readRecent();
     }
 
@@ -80,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     {
 //        if(sortBy == "name") ((RadioButton)findViewById(R.id.nameRadio)).setChecked(true);
 //        else ((RadioButton)findViewById(R.id.ratingRadio)).setChecked(true);
-        //readRecent();
+        readRecent();
         super.onResume();
     }
 
@@ -140,17 +137,19 @@ public class MainActivity extends AppCompatActivity {
     };
 
 /////////////////////////////////// B U T T O N    H A N D L E R S //////////////////////////////////////////////
-    public void onClickWalk(View v){ myLocationBinder.startWorkout(0); }
-    public void onClickJog(View v){ myLocationBinder.startWorkout(1); }
-    public void onClickRun(View v){ myLocationBinder.startWorkout(2); }
-    public void onClickFav(View v){ Log.d("whore","CLICKED HEART"); }
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void onClickWalk(View v){ myLocationBinder.startWorkout(0); readRecent();}
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void onClickJog(View v){ myLocationBinder.startWorkout(1); readRecent();}
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void onClickRun(View v){ myLocationBinder.startWorkout(2); readRecent();}
+    public void onClickFav(View v){ Log.d("listview","CLICKED HEART"); }
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readRecent() {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
-        Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS,
-                new String[]{"_id", "type", "dateTime", "duration", "distance"},
+        Cursor c = getContentResolver().query(WorkoutsContract.RECENTS,null,
                 null, null, "datetime DESC", null);
         String[] columns = new String[]{"dateTime", "duration", "distance","_id"};
 

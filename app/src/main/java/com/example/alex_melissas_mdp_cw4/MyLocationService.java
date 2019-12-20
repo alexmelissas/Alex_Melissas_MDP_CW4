@@ -121,8 +121,12 @@ public class MyLocationService extends Service {
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
             workoutValues.put(WorkoutsContract.TYPE,type);
+
+            //testing - NEED THINK HOW STORE THESE VALUES - APPEND km and _km before storing
             workoutValues.put(WorkoutsContract.DURATION,"08:12");
             workoutValues.put(WorkoutsContract.DISTANCE,"00.96km");
+            workoutValues.put(WorkoutsContract.AVGSPEED,"00.96 km");
+
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             String newWorkoutIdString = "" + newWorkoutId;
 

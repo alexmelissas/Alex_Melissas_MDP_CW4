@@ -12,6 +12,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 
 public class WorkoutsProvider extends ContentProvider {
 
@@ -58,8 +60,7 @@ public class WorkoutsProvider extends ContentProvider {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
             case 2: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
-            case 4: return db.rawQuery("SELECT _id, type, dateTime, duration, distance " +
-                    "FROM workouts ORDER BY fav DESC, dateTime DESC LIMIT 2",selectionArgs);
+            case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY fav DESC, dateTime DESC LIMIT 2",selectionArgs);
 
 //            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
 //                            "from recipes r "+
@@ -90,28 +91,26 @@ public class WorkoutsProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName = getTableFromUri(uri);
 
-//        {
-//            //if deleting recipe then check if nothing else uses an ingredient then delete the ingredient
-//            if (tableName == "recipes") {
-//                ArrayList<String> ingredients_of_deleted = new ArrayList<>();
-//                Cursor c = db.query("recipe_ingredients", new String[]{"recipe_id", "ingredient_id"}, "recipe_id = ?",
-//                        selectionArgs, null, null, null);
-//
-//                if (c.moveToFirst()) {
-//                    do {
-//                        ingredients_of_deleted.add(c.getString(1));
-//                    } while (c.moveToNext());
-//                    for (String ing : ingredients_of_deleted) {
-//                        Log.d("delete:", "checking rxi for ingredient: " + ing);
-//                        db.delete("recipe_ingredients", "recipe_id=?", selectionArgs);
-//                        Cursor cc = db.query("recipe_ingredients", new String[]{"ingredient_id"}, "ingredient_id = ?",
-//                                new String[]{ing}, null, null, null);
-//                        if (!cc.moveToFirst()) db.delete("ingredients", "_id=?", new String[]{ing});
-//                        else Log.d("didnt delete ", ing);
-//                    }
-//                }
-//            }
-//        }
+        //if deleting workout then check if nothing else uses a location => delete location
+        if (tableName == "workouts") {
+            ArrayList<String> ids_of_locations = new ArrayList<>();
+            Cursor c = db.query("workoutswithlocations", new String[]{"workout_id", "location_id"}, "workout_id = ?",
+                    selectionArgs, null, null, null);
+
+            if (c.moveToFirst()) {
+                do {
+                    ids_of_locations.add(c.getString(1));
+                } while (c.moveToNext());
+                for (String id : ids_of_locations) {
+                    Log.d("delete:", "checking wwl for location: " + id);
+                    db.delete("workoutswithlocations", "workout_id=?", selectionArgs);
+                    Cursor cc = db.query("workoutswithlocations", new String[]{"location_id"}, "location_id = ?",
+                            new String[]{id}, null, null, null);
+                    if (!cc.moveToFirst()) db.delete("locations", "_id=?", new String[]{id});
+                    else Log.d("didnt delete ", id);
+                }
+            }
+        }
 
         db.delete(tableName,selection,selectionArgs);
         db.close();

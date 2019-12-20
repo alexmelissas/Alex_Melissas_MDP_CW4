@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SingleWorkout">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="52dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
-        android:text="like"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="144dp"
@@ -45,8 +34,8 @@
         android:id="@+id/typeImageSingle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -56,8 +45,8 @@
         android:id="@+id/datetimeText"
         android:layout_width="105dp"
         android:layout_height="48dp"
-        android:layout_marginStart="11dp"
-        android:layout_marginLeft="11dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginTop="16dp"
         android:text="88/88/88 | 88:88"
         android:textSize="18sp"
@@ -79,36 +68,28 @@
 
     <Button
         android:id="@+id/deleteButton"
-        android:layout_width="73dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="75dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="4dp"
+        android:onClick="onClickDelete"
         android:text="Delete"
-        app:layout_constraintStart_toEndOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
-
-    <Button
-        android:id="@+id/renameButton"
-        android:layout_width="88dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="12dp"
-        android:text="RENAME"
-        app:layout_constraintStart_toEndOf="@+id/deleteButton"
+        app:layout_constraintStart_toEndOf="@+id/likeCheck"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
     <TextView
         android:id="@+id/durationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginLeft="52dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginLeft="44dp"
+        android:layout_marginTop="88dp"
         android:text="88:88"
         android:textColor="#FF0000"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
     <EditText
         android:id="@+id/notesText"
@@ -140,38 +121,55 @@
         android:id="@+id/distanceText"
         android:layout_width="97dp"
         android:layout_height="31dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="88dp"
         android:text="88.88km"
         android:textColor="#03A6F8"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/durationText"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
     <TextView
         android:id="@+id/avgspeedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="88dp"
         android:text="6.0 km/h"
         android:textColor="#038513"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/distanceText"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
+    <CheckBox
+        android:id="@+id/likeCheck"
+        android:layout_width="46dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        android:button="@drawable/likebutton"
+        android:checked="false"
         android:clickable="true"
-        app:layout_constraintStart_toEndOf="@+id/datetimeText"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/heart_off_icon" />
+        android:onClick="onCheckLike"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+
+    <CheckBox
+        android:id="@+id/favCheck"
+        android:layout_width="46dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
+        android:layout_marginTop="4dp"
+        android:button="@drawable/favbutton"
+        android:checked="false"
+        android:clickable="true"
+        android:onClick="onCheckFav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

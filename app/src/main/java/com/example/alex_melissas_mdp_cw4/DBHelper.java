@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "avgSpeed INTEGER, "
                         + "imgPath VARCHAR(128), "
                         + "liked INTEGER, "
-                        + "fav INTEGER," +
+                        + "fav INTEGER, " +
                         " notes TEXT);"
         );
 

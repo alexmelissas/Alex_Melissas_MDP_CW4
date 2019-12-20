@@ -21,6 +21,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
@@ -151,12 +152,12 @@ public class MainActivity extends AppCompatActivity {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
         Cursor c = getContentResolver().query(WorkoutsContract.RECENTS,null,
                 null, null, "datetime DESC", null);
-        String[] columns = new String[]{"dateTime", "duration", "distance","_id"};
 
-        // how to switch image for type of each entry??
-
+        String[] columns = new String[]{"dateTime", "duration", "distance", "type", "fav"};
+        //String[] columns = new String[]{"_id", "type", "dateTime", "duration", "distance", "fav"};
         int[] to = new int[]{R.id.datetimeBox, R.id.durationBox, R.id.distanceBox};
-        adapter = new SimpleCursorAdapter(this, R.layout.workout_entry, c, columns, to, 0);
+        adapter = new WorkoutCursorAdapter(this, R.layout.workout_entry, c, columns, to);
+
         recentList.setAdapter(adapter);
 
         recentList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

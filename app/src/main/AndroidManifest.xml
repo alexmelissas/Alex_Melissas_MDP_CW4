@@ -14,14 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SingleWorkout"></activity>
+        <activity android:name=".Records"></activity>
+        <activity android:name=".History" />
+        <activity android:name=".SingleWorkout" />
 
         <provider
             android:name=".WorkoutsProvider"
             android:authorities="com.example.alex_melissas_mdp_cw4.WorkoutsProvider"
             android:exported="true"
             android:multiprocess="true"
-            android:permission="android.permission.READ_EXTERNAL_STORAGE"></provider>
+            android:permission="android.permission.READ_EXTERNAL_STORAGE" />
 
         <service
             android:name=".MyLocationService"

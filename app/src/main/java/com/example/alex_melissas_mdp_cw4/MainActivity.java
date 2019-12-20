@@ -144,9 +144,12 @@ public class MainActivity extends AppCompatActivity {
     public void onClickJog(View v){ myLocationBinder.startWorkout(1); readRecent();}
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onClickRun(View v){ myLocationBinder.startWorkout(2); readRecent();}
-    public void onClickFav(View v){ Log.d("listview","CLICKED HEART"); }
 
-/////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
+    public void onClickHistory(View v){startActivity(new Intent(MainActivity.this, History.class));}
+
+    public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Records.class));}
+
+    /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readRecent() {
         final ListView recentList = (ListView) findViewById(R.id.recentList);

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".History">
+
+    <RadioGroup
+        android:id="@+id/timeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/todayRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Today" />
+
+        <RadioButton
+            android:id="@+id/weekRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Week" />
+
+        <RadioButton
+            android:id="@+id/monthRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Month" />
+
+        <RadioButton
+            android:id="@+id/yearRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Year" />
+
+        <RadioButton
+            android:id="@+id/allTimeRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="All Time" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/typeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeGroup">
+
+        <RadioButton
+            android:id="@+id/allTypeRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="All Types" />
+
+        <RadioButton
+            android:id="@+id/walkRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Walk" />
+
+        <RadioButton
+            android:id="@+id/jogRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Jog" />
+
+        <RadioButton
+            android:id="@+id/runRadio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Run" />
+    </RadioGroup>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="379dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeGroup" />
+
+    <TextView
+        android:id="@+id/typeSort"
+        android:layout_width="56dp"
+        android:layout_height="19dp"
+        android:clickable="true"
+        android:text="   Type   |"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/dateTimeSort"
+        android:layout_width="122dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:text="       Date/Time        |"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/typeSort"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/durationSort"
+        android:layout_width="72dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="176dp"
+        android:layout_marginLeft="176dp"
+        android:text=" Duration  |"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/typeSort"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/distanceSort"
+        android:layout_width="91dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="248dp"
+        android:layout_marginLeft="248dp"
+        android:text="     Distance    |"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/typeSort"
+        app:layout_constraintTop_toTopOf="@+id/divider" />
+
+    <ListView
+        android:id="@+id/historyList"
+        android:layout_width="379dp"
+        android:layout_height="498dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="57dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeGroup" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

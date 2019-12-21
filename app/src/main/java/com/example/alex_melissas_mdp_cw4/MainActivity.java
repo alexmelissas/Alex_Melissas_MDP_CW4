@@ -42,15 +42,14 @@ public class MainActivity extends AppCompatActivity {
     protected SQLiteDatabase db;
     protected SimpleCursorAdapter adapter;
 
-/////////////////////////// S T O R A G E   P E R M I S S I O N S ///////////////////////////////////////////////
-    public static void checkStoragePermissions(Activity activity) {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+///////////////////////////////// P E R M I S S I O N S /////////////////////////////////////////////////////////
+    public static void checkPermissions(Activity activity) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)//NOT ROBUST
+                != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions( activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-        }
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
-
 ///////////////////////////////////// G E N E R A L /////////////////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -62,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
-        checkStoragePermissions(this);
-        musicFolderPath = Environment.getExternalStorageDirectory().getPath() + "/Music/";
+        checkPermissions(this);
 
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),

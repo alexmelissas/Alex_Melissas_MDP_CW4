@@ -52,7 +52,7 @@ public class Totals extends AppCompatActivity {
         float totalSpeedAvg = 0;
         int i=0;
         if(c.moveToFirst()) do{
-            totalSec += durationToSec(c.getString(4));
+            totalSec += c.getInt(4);
             totalDis += c.getFloat(5);
             totalSpeedAvg += c.getFloat(6);
             i++;
@@ -62,13 +62,6 @@ public class Totals extends AppCompatActivity {
         ((TextView)findViewById(R.id.durationTotalText)).setText(secToDuration(totalSec));
         ((TextView)findViewById(R.id.distanceTotalText)).setText(String.format("%.2f",totalDis)+"km");
         ((TextView)findViewById(R.id.speedTotalText)).setText(String.format("%.2f",totalSpeedAvg)+"km/h");
-    }
-
-    private int durationToSec(String duration) {
-        String[] parts = duration.split(":");
-        int mins = Integer.parseInt(parts[0]);
-        int secs = Integer.parseInt(parts[1]);
-        return (mins*60 + secs);
     }
 
     private String secToDuration(int sec){

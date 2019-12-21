@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
@@ -32,6 +33,8 @@ public class MyLocationService extends Service {
     protected LocationManager locationManager;
     protected MyLocationListener locationListener;
     RemoteCallbackList<MyLocationBinder> remoteCallbackList = new RemoteCallbackList<MyLocationBinder>();
+
+    String workout_id;
     boolean workoutActive;
     int workoutType;
 
@@ -40,12 +43,15 @@ public class MyLocationService extends Service {
     @Override
 
     public void onCreate() {
+        Log.d("¬¬¬¬¬¬¬¬From Service: ", "onCreate'd");
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener();
+        try { locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                1, 1,locationListener);
+        } catch(SecurityException e) { Log.d("g53mdp", e.toString()); }
+
         workoutActive = false;
         super.onCreate();
-        Log.d("¬¬¬¬¬¬¬¬From Service: ", "onCreate'd");
-
     }
 
     public void onDestroy(){
@@ -97,25 +103,12 @@ public class MyLocationService extends Service {
         }
 
         public boolean getState(){ if(workoutActive)return true; return false; }
-        //to display current type of activity or smth
-        public int getType(){ return workoutType; }
-
-        public void checkGPS(){ // IS THIS WITH BROADCASTS? LIKE GPS UPDATE COME AS BROADCASTS??
-            try{
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5,5, locationListener);
-            }catch(SecurityException e){
-                Log.d("alex4",e.toString());
-            }
-        }
 
         public long startWorkout(int type) throws ParseException {
-
             if(workoutActive) return -1;
             workoutType = type;
 
             notification();
-            //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
-            // ALSO ABLE TO RETURN TO APP (WHERE YOU CAN STOP WORKOUT / STOP FROM NOTIFICATION EVEN?)
 
         // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
@@ -130,20 +123,40 @@ public class MyLocationService extends Service {
             workoutValues.put(WorkoutsContract.YYYYMMDD, currentReverseDate);
             workoutValues.put(WorkoutsContract.TYPE,workoutType);
 
-            //testing - NEED THINK HOW STORE THESE VALUES - APPEND km and km/h before storing
             workoutValues.put(WorkoutsContract.DURATION,"12:34");
             workoutValues.put(WorkoutsContract.DISTANCE,"10.3");
             workoutValues.put(WorkoutsContract.AVGSPEED,"3.4");
 
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
-            String newWorkoutIdString = "" + newWorkoutId;
+            workout_id = "" + newWorkoutId;
 
         // 2. Insert new WorkoutsWithLocations entry, and Location if new.
 
-            Location start = null;
-            // GET CURRENT LOCATION AS START POINT
-            double start_lon = 0;//start.getLongitude();
-            double start_lat = 0;//start.getLatitude();
+            locationListener.reset();
+            return insertWorkoutWithLocationEntry();
+        }
+
+        public void stopWorkout(){
+
+            float endDistance = locationListener.getDistance();
+            float endDuration = locationListener.getDuration();
+
+            ContentValues finishedWorkout = new ContentValues();
+            finishedWorkout.put("duration",endDuration);
+            finishedWorkout.put("distance",endDistance);
+            finishedWorkout.put("avgSpeed",endDistance/endDuration);
+            getContentResolver().update(WorkoutsContract.WORKOUTS,finishedWorkout,"_id=?",new String[]{workout_id});
+
+            insertWorkoutWithLocationEntry();
+
+            workoutActive = false;
+            doCallBackCheckWorkout();
+        }
+
+        private long insertWorkoutWithLocationEntry(){
+
+            double start_lon = locationListener.getLocationCoords()[0];
+            double start_lat = locationListener.getLocationCoords()[1];
 
             //Check if this Location already exists
             Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
@@ -155,14 +168,14 @@ public class MyLocationService extends Service {
                 String location_id = "" + c.getInt(0);
                 Log.d("Location EXISTS: ", location_id);
                 ContentValues workoutsWithLocationsValues = new ContentValues();
-                workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, newWorkoutIdString);
+                workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, workout_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, location_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
                 workoutActive = true;
                 doCallBackCheckWorkout();
                 return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
 
-            // If not exists, create new entry for it in Locations and then new entry for wID, lID in WwL table
+                // If not exists, create new entry for it in Locations and then new entry for wID, lID in WwL table
             } else {
 
                 Log.d("Location: ", "NOT EXIST");
@@ -174,7 +187,7 @@ public class MyLocationService extends Service {
                 String newLocationIdString = "" + newLocationId;
 
                 ContentValues workoutsWithLocationsValues = new ContentValues();
-                workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, newWorkoutIdString);
+                workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, workout_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, newLocationIdString);
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
                 workoutActive = true;
@@ -182,27 +195,14 @@ public class MyLocationService extends Service {
                 return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
             }
         }
-
-        public void stopWorkout(){
-            workoutActive = false;
-            doCallBackCheckWorkout();
-        }
-
-        public void runWorkout(){
-            // have a thread taking the GPS input etc
-            // calculating distance
-            // measuring time
-            // have variables storing these and then update the locations with final loc and workouts with stats
-        }
-
-        public float calculateDistance(Location start, Location end){ return start.distanceTo(end); }
-        //keep updating the entry?
-        //SHOULD PROBABLY  CALL THIS ALL THE TIME AND ADD TO DISTANCE NOT JUST AT THE END
     }
 
     ///////////////////////////////////// N O T I F I C A T I O N S ///////////////////////////////////
 
     public void notification(){
+
+        //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
+        // ALSO ABLE TO RETURN TO APP (WHERE YOU CAN STOP WORKOUT / STOP FROM NOTIFICATION EVEN?)
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 

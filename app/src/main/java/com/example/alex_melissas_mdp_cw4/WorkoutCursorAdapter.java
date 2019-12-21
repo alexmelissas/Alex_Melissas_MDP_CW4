@@ -65,12 +65,21 @@ public class WorkoutCursorAdapter extends SimpleCursorAdapter {
         }
 
         vh.dateTimeBox.setText(c.getString(dateTimeIndex));
-        vh.durationBox.setText(c.getString(durationIndex));
-        vh.distanceBox.setText(c.getString(distanceIndex)+"km");
+
+        vh.durationBox.setText(secToDuration(c.getInt(durationIndex)));
+
+        vh.distanceBox.setText(String.format("%02.2f",(c.getFloat(distanceIndex)))+"km");
 
         if(c.getInt(favIndex)==1) vh.favButton.setImageResource(R.mipmap.heart_on_icon);
         else vh.favButton.setImageResource(R.mipmap.heart_off_icon);
 
         //vh.imageView.setImageBitmap ( mySetImage ( sFileAndPath_Image ) );
+    }
+
+    private String secToDuration(int sec){
+        int hours = sec/3600;
+        int mins = (sec-hours*3600)/60;
+        int secs = (sec-hours*3600)%60;
+        return /*String.format("%2d",hours)+":"+*/String.format("%02d",mins)+":"+String.format("%02d",secs);
     }
 }

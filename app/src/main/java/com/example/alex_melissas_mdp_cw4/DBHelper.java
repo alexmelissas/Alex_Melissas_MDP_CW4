@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "imgPath VARCHAR(128), "
                         + "liked INTEGER, "
                         + "fav INTEGER, "
-                        + " notes TEXT, "
+                        + "notes TEXT, "
                         + "yyyymmdd VARCHAR(10));"
 
         );

@@ -22,6 +22,7 @@ import android.widget.EditText;
 
 import androidx.core.app.NotificationCompat;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -108,7 +109,7 @@ public class MyLocationService extends Service {
             }
         }
 
-        public long startWorkout(int type) {
+        public long startWorkout(int type) throws ParseException {
 
             //if(workoutActive) return -1;
 
@@ -118,11 +119,15 @@ public class MyLocationService extends Service {
 
         // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
-            String currentDateTime = sdf.format(new Date());
+            SimpleDateFormat ddMMyyhhmmss = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
+            String currentDateTime = ddMMyyhhmmss.format(new Date());
+            Date ymd = ddMMyyhhmmss.parse(currentDateTime);
+            SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+            String currentReverseDate = yyyyMMdd.format(ymd);
 
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
+            workoutValues.put(WorkoutsContract.YYYYMMDD, currentReverseDate);
             workoutValues.put(WorkoutsContract.TYPE,type);
 
             //testing - NEED THINK HOW STORE THESE VALUES - APPEND km and km/h before storing
@@ -133,13 +138,6 @@ public class MyLocationService extends Service {
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             String newWorkoutIdString = "" + newWorkoutId;
 
-            //Now update the week
-            Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK, null,null,null,null);
-            c.moveToFirst();
-            ContentValues updateWeek = new ContentValues();
-            updateWeek.put(WorkoutsContract.WEEK,c.getInt(0));
-            getContentResolver().update(WorkoutsContract.WORKOUTS,updateWeek,"_id=?",new String[]{newWorkoutIdString});
-
         // 2. Insert new WorkoutsWithLocations entry, and Location if new.
 
             Location start = null;
@@ -148,7 +146,7 @@ public class MyLocationService extends Service {
             double start_lat = 0;//start.getLatitude();
 
             //Check if this Location already exists
-            c = getContentResolver().query(WorkoutsContract.LOCATIONS,
+            Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
                     new String[]{WorkoutsContract._ID, WorkoutsContract.LON, WorkoutsContract.LAT},
                     "lon = ? AND lat = ?", new String[]{""+start_lon,""+start_lat}, null);
 

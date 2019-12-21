@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -91,7 +92,7 @@ public class History extends AppCompatActivity {
 //    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private void querySelections(){
+    private void querySelections() {
 
         String selection = "";
         if(typeFilter!="-1") {
@@ -117,22 +118,13 @@ public class History extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTimeFilter(View v){
-        setTimeFilter(v);
-        querySelections();
-    }
+    public void clickTimeFilter(View v) { setTimeFilter(v); querySelections(); }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTypeFilter(View v){
-        setTypeFilter(v);
-        querySelections();
-    }
+    public void clickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickListSort(View v){
-        setListSort(v);
-        querySelections();
-    }
+    public void clickListSort(View v) { setListSort(v); querySelections(); }
 
     private void setTimeFilter(View v){
         switch(v.getId()){
@@ -175,30 +167,33 @@ public class History extends AppCompatActivity {
         }
     }
 
+    //make the time selection part
     private String pickTime(){
         String selection = "";
         switch(timeFilter){
-            case "today": selection += "(SUBSTR(dateTime,1,8))=?"; break;
-            case "week": selection += "week=?"; break;
-            case "month": selection += "(SUBSTR(dateTime,4,5))=?"; break;
-            case "year": selection += "(SUBSTR(dateTime,7,2))=?"; break;
+            case "today": selection += "(SUBSTR(yyyymmdd,1,11))=?"; break;
+            case "week": selection += "(strftime('%W', yyyymmdd, 'localtime', 'weekday 0', '-6 days'))=?"; break;
+            case "month": selection += "(SUBSTR(yyyymmdd,1,8))=?"; break;
+            case "year": selection += "(SUBSTR(yyyymmdd,1,4))=?"; break;
             default: break;
         }
         return selection;
     }
 
-    private String splitDate(){
+    //split date for
+    private String splitDate() {
         //date-time comparisons??
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
-        String currentDateTime = sdf.format(new Date());
+        SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+        String currentReverseDate = yyyyMMdd.format(new Date());
+
         String date = "";
 
         switch(timeFilter){
-            case "today": date = currentDateTime.substring(0,8); break;
+            case "today": date = currentReverseDate.substring(0,10); break;
             //week is handled separately, see querything
-            case "month": date = currentDateTime.substring(3,8); break;
-            case "year": date = currentDateTime.substring(6,8); break;
-            default: date = currentDateTime.substring(0,8); break;
+            case "month": date = currentReverseDate.substring(0,7); break;
+            case "year": date = currentReverseDate.substring(0,4); break;
+            default: date = currentReverseDate.substring(0,10); break;
         }
         return date;
     }
@@ -207,7 +202,6 @@ public class History extends AppCompatActivity {
             Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK,
                     null,null,null,null);
             c.moveToFirst();
-            Log.d("WEEK: ", ""+c.getInt(0));
             return c.getInt(0);
     }
 

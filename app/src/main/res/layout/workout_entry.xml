@@ -74,8 +74,7 @@
         android:layout_marginRight="10dp"
         android:layout_toEndOf="@+id/distanceBox"
         android:layout_toRightOf="@+id/distanceBox"
-        android:clickable="true"
-        android:onClick="onClickFav"
+        android:clickable="false"
         app:srcCompat="@mipmap/heart_off_icon" />
 
 </RelativeLayout>

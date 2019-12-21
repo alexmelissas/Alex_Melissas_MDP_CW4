@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "liked INTEGER, "
                         + "fav INTEGER, "
                         + " notes TEXT, "
-                        + "week INTEGER );"
+                        + "yyyymmdd VARCHAR(10));"
 
         );
 

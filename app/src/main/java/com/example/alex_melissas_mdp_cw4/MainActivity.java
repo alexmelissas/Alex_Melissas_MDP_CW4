@@ -28,6 +28,7 @@ import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -76,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume()
     {
-//        if(sortBy == "name") ((RadioButton)findViewById(R.id.nameRadio)).setChecked(true);
-//        else ((RadioButton)findViewById(R.id.ratingRadio)).setChecked(true);
         readRecent();
         super.onResume();
     }
@@ -139,11 +138,13 @@ public class MainActivity extends AppCompatActivity {
 
 /////////////////////////////////// B U T T O N    H A N D L E R S //////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickWalk(View v){ myLocationBinder.startWorkout(0); readRecent();}
+    public void onClickWalk(View v) throws ParseException { myLocationBinder.startWorkout(0); readRecent();}
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickJog(View v){ myLocationBinder.startWorkout(1); readRecent();}
+    public void onClickJog(View v) throws ParseException { myLocationBinder.startWorkout(1); readRecent();}
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickRun(View v){ myLocationBinder.startWorkout(2); readRecent();}
+    public void onClickRun(View v) throws ParseException { myLocationBinder.startWorkout(2); readRecent();}
 
     public void onClickHistory(View v){startActivity(new Intent(MainActivity.this, History.class));}
 

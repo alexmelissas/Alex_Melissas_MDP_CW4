@@ -28,6 +28,7 @@ public class WorkoutsContract {
     public static final String FAV = "fav";
     public static final String NOTES = "notes";
     public static final String WEEK = "week";
+    public static final String YYYYMMDD = "yyyymmdd";
 
     //Location stuff
     public static final String LON = "lon";

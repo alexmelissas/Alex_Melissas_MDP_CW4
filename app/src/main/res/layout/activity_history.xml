@@ -25,28 +25,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:onClick="clickTimeSort"
+            android:onClick="clickTimeFilter"
             android:text="Today" />
 
         <RadioButton
             android:id="@+id/weekRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeSort"
+            android:onClick="clickTimeFilter"
             android:text="Week" />
 
         <RadioButton
             android:id="@+id/monthRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeSort"
+            android:onClick="clickTimeFilter"
             android:text="Month" />
 
         <RadioButton
             android:id="@+id/yearRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeSort"
+            android:onClick="clickTimeFilter"
             android:text="Year" />
 
         <RadioButton
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTimeSort"
+            android:onClick="clickTimeFilter"
             android:text="All Time" />
     </RadioGroup>
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:onClick="clickTypeSort"
+            android:onClick="clickTypeFilter"
             android:text="All Types" />
 
         <RadioButton
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTypeSort"
+            android:onClick="clickTypeFilter"
             android:text="Walk" />
 
         <RadioButton
@@ -92,14 +92,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTypeSort"
+            android:onClick="clickTypeFilter"
             android:text="Jog" />
 
         <RadioButton
             android:id="@+id/runRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTypeSort"
+            android:onClick="clickTypeFilter"
             android:text="Run" />
     </RadioGroup>
 

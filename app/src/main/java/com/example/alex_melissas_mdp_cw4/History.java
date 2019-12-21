@@ -30,7 +30,11 @@ public class History extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        sortBy = "datetime DESC";
+
+        setTypeFilter(findViewById(R.id.allTypeRadio));
+        setTimeFilter(findViewById(R.id.todayRadio));
+        setListSort(findViewById(R.id.dateTimeSort));
+
         readWorkouts(null,null);
     }
 
@@ -70,30 +74,18 @@ public class History extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTimeSort(View v){
+    // PUT WITH SAVESTATE SHIT
 
-        switch(v.getId()){
-            case R.id.todayRadio: timeFilter = "today"; break;
-            case R.id.weekRadio: timeFilter = "week"; break;
-            case R.id.monthRadio: timeFilter = "month"; break;
-            case R.id.yearRadio: timeFilter = "year"; break;
-            case R.id.allTimeRadio: timeFilter = "-1"; break;
-        }
-        querySelections();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTypeSort(View v){
-
-        switch(v.getId()){
-            case R.id.allTypeRadio: typeFilter = "-1"; break;
-            case R.id.walkRadio: typeFilter = "0"; break;
-            case R.id.jogRadio: typeFilter = "1"; break;
-            case R.id.runRadio: typeFilter = "2"; break;
-        }
-        querySelections();
-    }
+//    private void updateFromRadios(){
+//
+//        switch(timeFilter){
+//            case "today": ((RadioButton)findViewById(R.id.todayRadio)).setChecked(true); break;
+//            case "week": ((RadioButton)findViewById(R.id.weekRadio)).setChecked(true); break;
+//            case "month": ((RadioButton)findViewById(R.id.monthRadio)).setChecked(true); break;
+//            case "year": ((RadioButton)findViewById(R.id.yearRadio)).setChecked(true); break;
+//            case "alltime": ((RadioButton)findViewById(R.id.allTimeRadio)).setChecked(true); break;
+//        }
+//    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void querySelections(){
@@ -107,9 +99,6 @@ public class History extends AppCompatActivity {
         else if(timeFilter!="-1"){ selection += pickTime(); }
         else selection = null;
 
-        //need way to get current month etc
-        // eg. today -match all 3 dd/MM/yy / week match last 2 / year match last
-
         String splitDate = splitDate();
         Log.d("spltidate: ",splitDate);
         String[] selectionArgs = null;
@@ -122,37 +111,44 @@ public class History extends AppCompatActivity {
         readWorkouts(selection,selectionArgs);
     }
 
-    private String pickTime(){
-        String selection = "";
-        switch(timeFilter){
-            case "today": selection += "(SUBSTR(dateTime,1,7))=?"; break;
-            //case "week": selection += "SUBSTR(dateTime,1,7)=?"; break;
-            case "month": selection += "(SUBSTR(dateTime,4,4))=?"; break;
-            case "year": selection += "(SUBSTR(dateTime,6,1))=?"; break;
-            default: break;
-        }
-        Log.d("selection: ",selection);
-        return selection;
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void clickTimeFilter(View v){
+        setTimeFilter(v);
+        querySelections();
     }
 
-    private String splitDate(){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
-        String currentDateTime = sdf.format(new Date());
-        String date = "";
-
-        switch(timeFilter){
-            case "today": date = currentDateTime.substring(0,8); break;
-            //case "week": selection += "SUBSTR(dateTime,1,7) = ?"; break;
-            case "month": date = currentDateTime.substring(3,8); break;
-            case "year": date = currentDateTime.substring(6,8); break;
-            default: date = currentDateTime.substring(0,8); break;
-        }
-        return date;
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void clickTypeFilter(View v){
+        setTypeFilter(v);
+        querySelections();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void clickListSort(View v){
+        setListSort(v);
+        querySelections();
+    }
 
+    private void setTimeFilter(View v){
+        switch(v.getId()){
+            case R.id.todayRadio: timeFilter = "today"; break;
+            case R.id.weekRadio: timeFilter = "week"; break;
+            case R.id.monthRadio: timeFilter = "month"; break;
+            case R.id.yearRadio: timeFilter = "year"; break;
+            case R.id.allTimeRadio: timeFilter = "-1"; break;
+        }
+    }
+
+    private void setTypeFilter(View v){
+        switch(v.getId()){
+            case R.id.allTypeRadio: typeFilter = "-1"; break;
+            case R.id.walkRadio: typeFilter = "0"; break;
+            case R.id.jogRadio: typeFilter = "1"; break;
+            case R.id.runRadio: typeFilter = "2"; break;
+        }
+    }
+
+    private void setListSort(View v){
         ((TextView)findViewById(R.id.typeSort)).setTypeface(null, Typeface.NORMAL);
         ((TextView)findViewById(R.id.dateTimeSort)).setTypeface(null, Typeface.NORMAL);
         ((TextView)findViewById(R.id.durationSort)).setTypeface(null, Typeface.NORMAL);
@@ -172,7 +168,35 @@ public class History extends AppCompatActivity {
                 ((TextView)findViewById(R.id.distanceSort)).setTypeface(null, Typeface.BOLD);
                 break;
         }
-        querySelections();
     }
+
+    private String pickTime(){
+        String selection = "";
+        switch(timeFilter){
+            case "today": selection += "(SUBSTR(dateTime,1,8))=?"; break;
+            //case "week": selection += "SUBSTR(dateTime,1,7)=?"; break;
+            case "month": selection += "(SUBSTR(dateTime,4,5))=?"; break;
+            case "year": selection += "(SUBSTR(dateTime,7,2))=?"; break;
+            default: break;
+        }
+        return selection;
+    }
+
+    private String splitDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
+        String currentDateTime = sdf.format(new Date());
+        String date = "";
+
+        switch(timeFilter){
+            case "today": date = currentDateTime.substring(0,8); break;
+            //case "week": selection += "SUBSTR(dateTime,1,7) = ?"; break;
+            case "month": date = currentDateTime.substring(3,8); break;
+            case "year": date = currentDateTime.substring(6,8); break;
+            default: date = currentDateTime.substring(0,8); break;
+        }
+        return date;
+    }
+
+
 
 }

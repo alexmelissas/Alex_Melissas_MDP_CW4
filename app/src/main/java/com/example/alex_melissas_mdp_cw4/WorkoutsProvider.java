@@ -55,6 +55,8 @@ public class WorkoutsProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
+        if(selectionArgs!=null) for(String s : selectionArgs) Log.d("SA: ", s);
 
         switch(uriMatcher.match(uri)) {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);

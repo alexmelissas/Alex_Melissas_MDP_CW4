@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickHistory(View v){startActivity(new Intent(MainActivity.this, History.class));}
 
-    public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Records.class));}
+    public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

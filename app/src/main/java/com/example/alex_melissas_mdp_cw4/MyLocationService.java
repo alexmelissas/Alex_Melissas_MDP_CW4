@@ -131,9 +131,9 @@ public class MyLocationService extends Service {
             workoutValues.put(WorkoutsContract.TYPE,workoutType);
 
             //testing - NEED THINK HOW STORE THESE VALUES - APPEND km and km/h before storing
-            workoutValues.put(WorkoutsContract.DURATION,"08:12");
-            workoutValues.put(WorkoutsContract.DISTANCE,"00.96km");
-            workoutValues.put(WorkoutsContract.AVGSPEED,"00.96km/h");
+            workoutValues.put(WorkoutsContract.DURATION,"12:34");
+            workoutValues.put(WorkoutsContract.DISTANCE,"10.3");
+            workoutValues.put(WorkoutsContract.AVGSPEED,"3.4");
 
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             String newWorkoutIdString = "" + newWorkoutId;

@@ -96,8 +96,8 @@ public class SingleWorkout extends AppCompatActivity {
 
             ((TextView)findViewById(R.id.datetimeText)).setText(recipeCursor.getString(3));
             ((TextView)findViewById(R.id.durationText)).setText(recipeCursor.getString(4));
-            ((TextView)findViewById(R.id.distanceText)).setText(recipeCursor.getString(5));
-            ((TextView)findViewById(R.id.avgspeedText)).setText(recipeCursor.getString(6));
+            ((TextView)findViewById(R.id.distanceText)).setText(recipeCursor.getString(5)+"km");
+            ((TextView)findViewById(R.id.avgspeedText)).setText(recipeCursor.getString(6)+"km/h");
             ((EditText)findViewById(R.id.notesText)).setText(recipeCursor.getString(10));
         }
     }

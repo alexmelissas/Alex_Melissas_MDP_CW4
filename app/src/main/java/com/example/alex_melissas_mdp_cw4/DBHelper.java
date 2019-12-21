@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "dateTime VARCHAR(128) NOT NULL, "
                         + "duration INTEGER, "
                         + "distance FLOAT, "
-                        + "avgSpeed INTEGER, "
+                        + "avgSpeed FLOAT, "
                         + "imgPath VARCHAR(128), "
                         + "liked INTEGER, "
                         + "fav INTEGER, "

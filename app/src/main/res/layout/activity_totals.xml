@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Totals">
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="69dp"
+        android:text="Distance Covered:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="69dp"
+        android:text="Average Speed:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/speedTotalText"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginRight="44dp"
+        android:text="4.68km/h"
+        android:textColor="#04630E"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/distanceTotalText" />
+
+    <TextView
+        android:id="@+id/durationTotalText"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_marginTop="126dp"
+        android:layout_marginEnd="94dp"
+        android:layout_marginRight="94dp"
+        android:textColor="#BE0011"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeGroupT"
+        tools:text="3:03:04" />
+
+    <TextView
+        android:id="@+id/distanceTotalText"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:text="165.30km"
+        android:textColor="#195ACF"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/durationTotalText" />
+
+    <RadioGroup
+        android:id="@+id/timeGroupT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/todayRadioT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:onClick="clickTimeFilter"
+            android:text="Today" />
+
+        <RadioButton
+            android:id="@+id/weekRadioT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clickTimeFilter"
+            android:text="Week" />
+
+        <RadioButton
+            android:id="@+id/monthRadioT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clickTimeFilter"
+            android:text="Month" />
+
+        <RadioButton
+            android:id="@+id/yearRadioT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clickTimeFilter"
+            android:text="Year" />
+
+        <RadioButton
+            android:id="@+id/allTimeRadioT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickTimeFilter"
+            android:text="All Time" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/typeGroupT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeGroupT">
+
+        <RadioButton
+            android:id="@+id/allTypeRadioT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:onClick="clickTypeFilter"
+            android:text="All Types" />
+
+        <RadioButton
+            android:id="@+id/walkRadioT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickTypeFilter"
+            android:text="Walk" />
+
+        <RadioButton
+            android:id="@+id/jogRadioT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickTypeFilter"
+            android:text="Jog" />
+
+        <RadioButton
+            android:id="@+id/runRadioT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="clickTypeFilter"
+            android:text="Run" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="124dp"
+        android:text="Workout Time:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeGroupT" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -66,7 +66,7 @@ public class WorkoutCursorAdapter extends SimpleCursorAdapter {
 
         vh.dateTimeBox.setText(c.getString(dateTimeIndex));
         vh.durationBox.setText(c.getString(durationIndex));
-        vh.distanceBox.setText(c.getString(distanceIndex));
+        vh.distanceBox.setText(c.getString(distanceIndex)+"km");
 
         if(c.getInt(favIndex)==1) vh.favButton.setImageResource(R.mipmap.heart_on_icon);
         else vh.favButton.setImageResource(R.mipmap.heart_off_icon);

@@ -5,18 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -103,15 +100,13 @@ public class History extends AppCompatActivity {
         else if(timeFilter!="-1"){ selection += pickTime(); }
         else selection = null;
 
-        String splitDate = splitDate();
+        String splitDate = formatDate();
 
         String[] selectionArgs = null;
         if(typeFilter!="-1") {
             selectionArgs = new String[]{typeFilter};
-            if(timeFilter=="week"){ selectionArgs = new String[]{typeFilter,""+getCurrentWeek()}; }
-            else if(timeFilter!="-1") selectionArgs = new String[]{typeFilter,splitDate};
+            if(timeFilter!="-1") selectionArgs = new String[]{typeFilter,splitDate};
         }
-        else if(timeFilter=="week"){ selectionArgs = new String[]{""+getCurrentWeek()}; }
         else if(timeFilter!="-1"){ selectionArgs = new String[]{splitDate}; }
 
         readWorkouts(selection,selectionArgs);
@@ -173,7 +168,7 @@ public class History extends AppCompatActivity {
         switch(timeFilter){
             case "today": selection += "(SUBSTR(yyyymmdd,1,11))=?"; break;
             case "week": selection += "(strftime('%W', yyyymmdd, 'localtime', 'weekday 0', '-6 days'))=?"; break;
-            case "month": selection += "(SUBSTR(yyyymmdd,1,8))=?"; break;
+            case "month": selection += "(SUBSTR(yyyymmdd,1,7))=?"; break;
             case "year": selection += "(SUBSTR(yyyymmdd,1,4))=?"; break;
             default: break;
         }
@@ -181,7 +176,7 @@ public class History extends AppCompatActivity {
     }
 
     //split date for
-    private String splitDate() {
+    private String formatDate() {
         //date-time comparisons??
         SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String currentReverseDate = yyyyMMdd.format(new Date());
@@ -190,7 +185,7 @@ public class History extends AppCompatActivity {
 
         switch(timeFilter){
             case "today": date = currentReverseDate.substring(0,10); break;
-            //week is handled separately, see querything
+            case "week": date = ""+getCurrentWeek(); break;
             case "month": date = currentReverseDate.substring(0,7); break;
             case "year": date = currentReverseDate.substring(0,4); break;
             default: date = currentReverseDate.substring(0,10); break;

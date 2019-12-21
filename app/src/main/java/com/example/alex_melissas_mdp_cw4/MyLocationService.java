@@ -108,10 +108,6 @@ public class MyLocationService extends Service {
             }
         }
 
-        // IDK ABOUT THIS - MAYBE JUST STORE ALL DATA SOMEWHERE
-        // THEN INSERT WHEN END OF WORKOUT?
-        // BUT THEN NO DYNAMIC VIEW OF DISTANCE ETC
-
         public long startWorkout(int type) throws ParseException {
 
             if(workoutActive) return -1;
@@ -190,6 +186,13 @@ public class MyLocationService extends Service {
         public void stopWorkout(){
             workoutActive = false;
             doCallBackCheckWorkout();
+        }
+
+        public void runWorkout(){
+            // have a thread taking the GPS input etc
+            // calculating distance
+            // measuring time
+            // have variables storing these and then update the locations with final loc and workouts with stats
         }
 
         public float calculateDistance(Location start, Location end){ return start.distanceTo(end); }

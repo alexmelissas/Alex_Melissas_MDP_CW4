@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context){
-        super(context, "recipesDB", null, 1);
+        super(context, "fitnessDB", null, 1);
     }
 
     public void onCreate(SQLiteDatabase db){
@@ -22,8 +22,10 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "avgSpeed INTEGER, "
                         + "imgPath VARCHAR(128), "
                         + "liked INTEGER, "
-                        + "fav INTEGER, " +
-                        " notes TEXT);"
+                        + "fav INTEGER, "
+                        + " notes TEXT, "
+                        + "week INTEGER );"
+
         );
 
         db.execSQL(
@@ -43,27 +45,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "CONSTRAINT _id PRIMARY KEY (workout_id, location_id) );"
 
         );
-
-        //Test values
-
-//        db.execSQL("INSERT INTO recipes (name, instructions, rating) VALUES ('beef stroganoff', 'put it in the microwave\nyou bought it from aldi\ndont act fancy', '3');");
-//        db.execSQL("INSERT INTO recipes (name, instructions, rating) VALUES ('veal picatta', 'heat it up\nand do some stuff\neat', '2');");
-//        db.execSQL("INSERT INTO recipes (name, instructions, rating) VALUES ('salad', 'get out\npick grass\neasy and cheap', '5');");
-//
-//        db.execSQL("INSERT INTO ingredients (ingredientname) VALUES ('saffron');");
-//        db.execSQL("INSERT INTO ingredients (ingredientname) VALUES ('veal rib 0.5 kg');");
-//        db.execSQL("INSERT INTO ingredients (ingredientname) VALUES ('beef');");
-//        db.execSQL("INSERT INTO ingredients (ingredientname) VALUES ('milk');");
-//        db.execSQL("INSERT INTO ingredients (ingredientname) VALUES ('greens');");
-//
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (1,3);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (1,4);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (2,1);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (2,2);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (2,4);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (3,1);");
-//        db.execSQL("INSERT INTO recipe_ingredients (recipe_id, ingredient_id) VALUES (3,5);");
-
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){

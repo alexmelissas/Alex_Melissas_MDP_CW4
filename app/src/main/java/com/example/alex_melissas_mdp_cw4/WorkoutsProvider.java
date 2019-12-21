@@ -26,6 +26,7 @@ public class WorkoutsProvider extends ContentProvider {
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "locations", 2);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workoutswithlocations", 3);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "recents", 4);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "getcurrentweek", 5);
     }
 
     @Override
@@ -63,6 +64,7 @@ public class WorkoutsProvider extends ContentProvider {
             case 2: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
             case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY fav DESC, dateTime DESC LIMIT 2",selectionArgs);
+            case 5: return db.rawQuery("SELECT strftime('%W', 'now', 'localtime', 'weekday 0', '-6 days') FROM workouts;",null);
 
 //            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
 //                            "from recipes r "+
@@ -127,4 +129,6 @@ public class WorkoutsProvider extends ContentProvider {
         db.close();
         return 0;
     }
+
+
 }

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,16 +35,18 @@ public class History extends AppCompatActivity {
         setTypeFilter(findViewById(R.id.allTypeRadio));
         setTimeFilter(findViewById(R.id.todayRadio));
         setListSort(findViewById(R.id.dateTimeSort));
-
         readWorkouts(null,null);
     }
 
     //maybe savestate shit for current projection/selection/args etc?
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    protected void onResume(Bundle savedInstanceState) {
-        super.onResume();
+    protected void onResume() {
+        setTypeFilter(findViewById(R.id.allTypeRadio));
+        setTimeFilter(findViewById(R.id.todayRadio));
+        setListSort(findViewById(R.id.dateTimeSort));
         readWorkouts(null,null);
+        super.onResume();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -100,12 +103,14 @@ public class History extends AppCompatActivity {
         else selection = null;
 
         String splitDate = splitDate();
-        Log.d("spltidate: ",splitDate);
+
         String[] selectionArgs = null;
         if(typeFilter!="-1") {
             selectionArgs = new String[]{typeFilter};
-            if(timeFilter!="-1") selectionArgs = new String[]{typeFilter,splitDate}; //WORKS FOR TODAY ONLY LOL
+            if(timeFilter=="week"){ selectionArgs = new String[]{typeFilter,""+getCurrentWeek()}; }
+            else if(timeFilter!="-1") selectionArgs = new String[]{typeFilter,splitDate};
         }
+        else if(timeFilter=="week"){ selectionArgs = new String[]{""+getCurrentWeek()}; }
         else if(timeFilter!="-1"){ selectionArgs = new String[]{splitDate}; }
 
         readWorkouts(selection,selectionArgs);
@@ -174,7 +179,7 @@ public class History extends AppCompatActivity {
         String selection = "";
         switch(timeFilter){
             case "today": selection += "(SUBSTR(dateTime,1,8))=?"; break;
-            //case "week": selection += "SUBSTR(dateTime,1,7)=?"; break;
+            case "week": selection += "week=?"; break;
             case "month": selection += "(SUBSTR(dateTime,4,5))=?"; break;
             case "year": selection += "(SUBSTR(dateTime,7,2))=?"; break;
             default: break;
@@ -189,7 +194,7 @@ public class History extends AppCompatActivity {
 
         switch(timeFilter){
             case "today": date = currentDateTime.substring(0,8); break;
-            //case "week": selection += "SUBSTR(dateTime,1,7) = ?"; break;
+            //week is handled separately, see querything
             case "month": date = currentDateTime.substring(3,8); break;
             case "year": date = currentDateTime.substring(6,8); break;
             default: date = currentDateTime.substring(0,8); break;
@@ -197,6 +202,12 @@ public class History extends AppCompatActivity {
         return date;
     }
 
-
+    private int getCurrentWeek(){
+            Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK,
+                    null,null,null,null);
+            c.moveToFirst();
+            Log.d("WEEK: ", ""+c.getInt(0));
+            return c.getInt(0);
+    }
 
 }

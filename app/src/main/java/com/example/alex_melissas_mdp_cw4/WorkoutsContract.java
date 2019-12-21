@@ -10,6 +10,7 @@ public class WorkoutsContract {
     public static final Uri LOCATIONS = Uri.parse("content://"+AUTHORITY+"/locations");
     public static final Uri WORKOUTSWITHLOCATIONS = Uri.parse("content://"+AUTHORITY+"/workoutswithlocations");
     public static final Uri RECENTS = Uri.parse("content://"+AUTHORITY+"/recents");
+    public static final Uri GETCURRRENTWEEK = Uri.parse("content://"+AUTHORITY+"/getcurrentweek");
 
     // HAVE JOINS FOR RECORDS eg. MOST DISTANCE / LONGEST WORKOUTS
 
@@ -26,6 +27,7 @@ public class WorkoutsContract {
     public static final String LIKED = "liked";
     public static final String FAV = "fav";
     public static final String NOTES = "notes";
+    public static final String WEEK = "week";
 
     //Location stuff
     public static final String LON = "lon";

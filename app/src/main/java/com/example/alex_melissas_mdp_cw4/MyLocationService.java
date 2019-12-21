@@ -46,8 +46,6 @@ public class MyLocationService extends Service {
         super.onCreate();
         Log.d("¬¬¬¬¬¬¬¬From Service: ", "onCreate'd");
 
-        //notification(); -- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
-        // ALSO ABLE TO RETURN TO APP OR STOP WORKOUT
     }
 
     public void onDestroy(){
@@ -114,10 +112,15 @@ public class MyLocationService extends Service {
 
             //if(workoutActive) return -1;
 
-        // 1. Insert new workout, bare-bones for now, just starting date/time.
+            notification();
+            //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
+            // ALSO ABLE TO RETURN TO APP OR STOP WORKOUT
+
+        // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
             String currentDateTime = sdf.format(new Date());
+
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
             workoutValues.put(WorkoutsContract.TYPE,type);
@@ -130,6 +133,13 @@ public class MyLocationService extends Service {
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             String newWorkoutIdString = "" + newWorkoutId;
 
+            //Now update the week
+            Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK, null,null,null,null);
+            c.moveToFirst();
+            ContentValues updateWeek = new ContentValues();
+            updateWeek.put(WorkoutsContract.WEEK,c.getInt(0));
+            getContentResolver().update(WorkoutsContract.WORKOUTS,updateWeek,"_id=?",new String[]{newWorkoutIdString});
+
         // 2. Insert new WorkoutsWithLocations entry, and Location if new.
 
             Location start = null;
@@ -138,7 +148,7 @@ public class MyLocationService extends Service {
             double start_lat = 0;//start.getLatitude();
 
             //Check if this Location already exists
-            Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
+            c = getContentResolver().query(WorkoutsContract.LOCATIONS,
                     new String[]{WorkoutsContract._ID, WorkoutsContract.LON, WorkoutsContract.LAT},
                     "lon = ? AND lat = ?", new String[]{""+start_lon,""+start_lat}, null);
 
@@ -201,7 +211,7 @@ public class MyLocationService extends Service {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this , CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.like_on_icon)
                 .setContentTitle("FitnessX 2.0")
                 .setContentText("Click to return to tracker")
                 .setContentIntent(pendingIntent)

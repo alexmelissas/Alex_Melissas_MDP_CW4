@@ -9,7 +9,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
@@ -18,7 +17,6 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
-import android.widget.EditText;
 
 import androidx.core.app.NotificationCompat;
 
@@ -35,6 +33,7 @@ public class MyLocationService extends Service {
     protected MyLocationListener locationListener;
     RemoteCallbackList<MyLocationBinder> remoteCallbackList = new RemoteCallbackList<MyLocationBinder>();
     boolean workoutActive;
+    int workoutType;
 
     ///////////////////////////////////// G E N E R A L  //////////////////////////////////////////////
 
@@ -60,11 +59,11 @@ public class MyLocationService extends Service {
     /////////////////////////////////// C A L L B A C K S  ////////////////////////////////////////////
 
     // Run the callback to all subscribers and then finish broadcast
-    public void doCallBackState(){
+    public void doCallBackCheckWorkout(){
         final int n = remoteCallbackList.beginBroadcast();
         Log.d("doCallBack: ","remoteCallList.beginBroadcast n = "+n);
         for (int i=0;i<n;i++){
-            //remoteCallbackList.getBroadcastItem(i).mp3Callback.checkState();
+            remoteCallbackList.getBroadcastItem(i).myLocationCallback.checkWorkout();
         }
         remoteCallbackList.finishBroadcast();
     }
@@ -88,18 +87,18 @@ public class MyLocationService extends Service {
             this.myLocationCallback = myLocationCallback;
             remoteCallbackList.register(MyLocationBinder.this);
             Log.d("binder","registered callback");
-            doCallBackState();
+            doCallBackCheckWorkout();
         }
 
         public void unregisterCallback(MyLocationCallback myLocationCallback) {
             remoteCallbackList.unregister(MyLocationBinder.this);
             Log.d("binder","unregistered callback");
-
-
-            if(remoteCallbackList.beginBroadcast()==0){
-                //IF NO WORKOUTS stopSelf();
-            }
+            if(remoteCallbackList.beginBroadcast()==0) if(!workoutActive) stopSelf();
         }
+
+        public boolean getState(){ if(workoutActive)return true; return false; }
+        //to display current type of activity or smth
+        public int getType(){ return workoutType; }
 
         public void checkGPS(){ // IS THIS WITH BROADCASTS? LIKE GPS UPDATE COME AS BROADCASTS??
             try{
@@ -109,13 +108,18 @@ public class MyLocationService extends Service {
             }
         }
 
+        // IDK ABOUT THIS - MAYBE JUST STORE ALL DATA SOMEWHERE
+        // THEN INSERT WHEN END OF WORKOUT?
+        // BUT THEN NO DYNAMIC VIEW OF DISTANCE ETC
+
         public long startWorkout(int type) throws ParseException {
 
-            //if(workoutActive) return -1;
+            if(workoutActive) return -1;
+            workoutType = type;
 
             notification();
             //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
-            // ALSO ABLE TO RETURN TO APP OR STOP WORKOUT
+            // ALSO ABLE TO RETURN TO APP (WHERE YOU CAN STOP WORKOUT / STOP FROM NOTIFICATION EVEN?)
 
         // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
@@ -128,7 +132,7 @@ public class MyLocationService extends Service {
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
             workoutValues.put(WorkoutsContract.YYYYMMDD, currentReverseDate);
-            workoutValues.put(WorkoutsContract.TYPE,type);
+            workoutValues.put(WorkoutsContract.TYPE,workoutType);
 
             //testing - NEED THINK HOW STORE THESE VALUES - APPEND km and km/h before storing
             workoutValues.put(WorkoutsContract.DURATION,"08:12");
@@ -158,6 +162,8 @@ public class MyLocationService extends Service {
                 workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, newWorkoutIdString);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, location_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
+                workoutActive = true;
+                doCallBackCheckWorkout();
                 return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
 
             // If not exists, create new entry for it in Locations and then new entry for wID, lID in WwL table
@@ -169,7 +175,6 @@ public class MyLocationService extends Service {
                 locationValues.put(WorkoutsContract.LON, start_lon);
                 locationValues.put(WorkoutsContract.LAT, start_lat);
                 long newLocationId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.LOCATIONS, locationValues));
-                workoutActive = true;
                 String newLocationIdString = "" + newLocationId;
 
                 ContentValues workoutsWithLocationsValues = new ContentValues();
@@ -177,11 +182,18 @@ public class MyLocationService extends Service {
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, newLocationIdString);
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
                 workoutActive = true;
+                doCallBackCheckWorkout();
                 return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
             }
         }
 
+        public void stopWorkout(){
+            workoutActive = false;
+            doCallBackCheckWorkout();
+        }
+
         public float calculateDistance(Location start, Location end){ return start.distanceTo(end); }
+        //keep updating the entry?
         //SHOULD PROBABLY  CALL THIS ALL THE TIME AND ADD TO DISTANCE NOT JUST AT THE END
     }
 

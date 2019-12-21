@@ -150,7 +150,7 @@ public class History extends AppCompatActivity {
             case R.id.typeSort: sortBy = "type DESC";
                 ((TextView)findViewById(R.id.typeSort)).setTypeface(null, Typeface.BOLD);
                 break;
-            case R.id.dateTimeSort: sortBy = "dateTime DESC";
+            case R.id.dateTimeSort: sortBy = "yyyymmdd DESC, dateTime DESC";
                 ((TextView)findViewById(R.id.dateTimeSort)).setTypeface(null, Typeface.BOLD);
                 break;
             case R.id.durationSort: sortBy = "duration DESC";
@@ -177,10 +177,8 @@ public class History extends AppCompatActivity {
 
     //split date for
     private String formatDate() {
-        //date-time comparisons??
         SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String currentReverseDate = yyyyMMdd.format(new Date());
-
         String date = "";
 
         switch(timeFilter){

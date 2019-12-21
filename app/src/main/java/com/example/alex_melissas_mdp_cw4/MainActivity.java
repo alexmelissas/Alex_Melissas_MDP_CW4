@@ -11,8 +11,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,17 +22,14 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected DBHelper dbHelper;
     protected SQLiteDatabase db;
     protected SimpleCursorAdapter adapter;
-    String sortBy = "datetime";
 
 /////////////////////////// S T O R A G E   P E R M I S S I O N S ///////////////////////////////////////////////
     public static void checkStoragePermissions(Activity activity) {
@@ -60,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setButtonVisibility(false);
 
         dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
@@ -70,14 +68,16 @@ public class MainActivity extends AppCompatActivity {
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),
                 serviceConnection, BIND_AUTO_CREATE);
-        readRecent();
+
+        setButtonVisibility(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onResume()
     {
-        readRecent();
+        readRecent(); //idk - maybe not insert.. idk
+        //test if workout active then update visiblebuttons
         super.onResume();
     }
 
@@ -94,11 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     //Standard ServiceConnection with callbacks
     private ServiceConnection serviceConnection = new ServiceConnection() {
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d("Alex CW4","Connected");
             myLocationBinder = (MyLocationService.MyLocationBinder) service;
             myLocationBinder.registerCallback(callback);
+            if(!myLocationBinder.getState()) readRecent();
         }
 
         @Override
@@ -109,48 +111,72 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void setButtonVisibility(boolean workoutActive){
+
+        ImageView animationImage = (ImageView)findViewById(R.id.animationImage);
+        AnimationDrawable workoutAnimation = (AnimationDrawable) animationImage.getBackground();
+
+        if(workoutActive){
+            findViewById(R.id.walkButton).setVisibility(View.GONE);
+            findViewById(R.id.jogButton).setVisibility(View.GONE);
+            findViewById(R.id.runButton).setVisibility(View.GONE);
+            findViewById(R.id.historyButton).setVisibility(View.GONE);
+            findViewById(R.id.recordsButton).setVisibility(View.GONE);
+            findViewById(R.id.recentText).setVisibility(View.GONE);
+            findViewById(R.id.recentList).setVisibility(View.GONE);
+
+            findViewById(R.id.stopButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.animationImage).setVisibility(View.VISIBLE);
+            workoutAnimation.start();
+        }
+        else{
+            findViewById(R.id.walkButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.jogButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.runButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.historyButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.recordsButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.recentText).setVisibility(View.VISIBLE);
+            findViewById(R.id.recentList).setVisibility(View.VISIBLE);
+
+            findViewById(R.id.stopButton).setVisibility(View.GONE);
+            findViewById(R.id.animationImage).setVisibility(View.GONE);
+            workoutAnimation.stop();
+        }
+    }
+
 /////////////////////////// C A L L B A C K  H A N D L I N G ////////////////////////////////////////////////////
     MyLocationCallback callback = new MyLocationCallback() {
-//        @Override
-//        public void checkState() {
-//            runOnUiThread(new Runnable() {
-//                // Update now playing title, progress bar according to if something's playing/paused
-//                // or not.
-//                @Override
-//                public void run() {
-//                    //displaySongTitles();
-//                    if(myLocationBinder.getState()== MP3Player.MP3PlayerState.PLAYING
-//                            || myLocationBinder.getState()== MP3Player.MP3PlayerState.PAUSED){
-//                        checkProgress = true;
-//                        initiateProgressUpdating();
-//                        ((TextView)findViewById(R.id.currentSongText))
-//                                .setText(pathToTitle(myLocationBinder.getFilePath()));
-//                    }
-//                    else {
-//                        ((TextView)findViewById(R.id.currentSongText)).setText("Nothing Playing.");
-//                        ((SeekBar)findViewById(R.id.progressBar)).setProgress(0);
-//                        ((TextView)findViewById(R.id.elapsedTime)).setText("0:00");
-//                    }
-//                }
-//            });
-//        }
+        @Override
+        public void checkWorkout() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(myLocationBinder.getState()){
+                        checkProgress = true;
+                        initiateProgressUpdating();
+                        setButtonVisibility(true);
+                    }
+                    else {
+                        setButtonVisibility(false);
+                    }
+                }
+            });
+        }
     };
 
 /////////////////////////////////// B U T T O N    H A N D L E R S //////////////////////////////////////////////
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickWalk(View v) throws ParseException { myLocationBinder.startWorkout(0); readRecent();}
+    public void onClickWalk(View v) throws ParseException { myLocationBinder.startWorkout(0);}
+    public void onClickJog(View v) throws ParseException { myLocationBinder.startWorkout(1);}
+    public void onClickRun(View v) throws ParseException { myLocationBinder.startWorkout(2);}
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickJog(View v) throws ParseException { myLocationBinder.startWorkout(1); readRecent();}
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onClickRun(View v) throws ParseException { myLocationBinder.startWorkout(2); readRecent();}
+    public void onClickStop(View v) {myLocationBinder.stopWorkout(); readRecent();}
 
     public void onClickHistory(View v){startActivity(new Intent(MainActivity.this, History.class));}
 
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Records.class));}
 
-    /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
+/////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readRecent() {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
@@ -158,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
                 null, null, "datetime DESC", null);
 
         String[] columns = new String[]{"dateTime", "duration", "distance", "type", "fav"};
-        //String[] columns = new String[]{"_id", "type", "dateTime", "duration", "distance", "fav"};
         int[] to = new int[]{R.id.datetimeBox, R.id.durationBox, R.id.distanceBox};
         adapter = new WorkoutCursorAdapter(this, R.layout.workout_entry, c, columns, to);
 
@@ -181,18 +206,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 /////////////////////////////////// S E R V I C E   S T U F F ///////////////////////////////////////
+
     // Track song progress, displayed in progress bar as percentage and shown in m:ss format
     public void initiateProgressUpdating(){
         progressBarHandler = new Handler();
         progressBarHandler.post(new Runnable() {
             @Override
             public void run() {
-//                if(checkProgress) {
-//                    float progress = ((float) mp3Service.getProgress()/mp3Service.getDuration())*100;
-//                    progressBar.setProgress((int)progress);
-//                    ((TextView)findViewById(R.id.elapsedTime)).setText(msToMinutesSeconds(mp3Service.getProgress()));
-//                    progressBarHandler.postDelayed(this,500);
-//                }
+                if(checkProgress) {
+                    //
+                }
             }
         });
     }

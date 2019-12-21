@@ -188,6 +188,7 @@ public class History extends AppCompatActivity {
     }
 
     private String splitDate(){
+        //date-time comparisons??
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
         String currentDateTime = sdf.format(new Date());
         String date = "";

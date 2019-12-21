@@ -25,24 +25,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:onClick="clickTimeSort"
             android:text="Today" />
 
         <RadioButton
             android:id="@+id/weekRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickTimeSort"
             android:text="Week" />
 
         <RadioButton
             android:id="@+id/monthRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickTimeSort"
             android:text="Month" />
 
         <RadioButton
             android:id="@+id/yearRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickTimeSort"
             android:text="Year" />
 
         <RadioButton
@@ -50,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="clickTimeSort"
             android:text="All Time" />
     </RadioGroup>
 
@@ -71,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
+            android:onClick="clickTypeSort"
             android:text="All Types" />
 
         <RadioButton
@@ -78,6 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="clickTypeSort"
             android:text="Walk" />
 
         <RadioButton
@@ -85,12 +92,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:onClick="clickTypeSort"
             android:text="Jog" />
 
         <RadioButton
             android:id="@+id/runRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickTypeSort"
             android:text="Run" />
     </RadioGroup>
 
@@ -114,6 +123,7 @@
         android:layout_width="56dp"
         android:layout_height="19dp"
         android:clickable="true"
+        android:onClick="clickListSort"
         android:text="   Type   |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/divider"
@@ -125,6 +135,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="56dp"
         android:layout_marginLeft="56dp"
+        android:onClick="clickListSort"
         android:text="       Date/Time        |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"
@@ -136,6 +147,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="176dp"
         android:layout_marginLeft="176dp"
+        android:onClick="clickListSort"
         android:text=" Duration  |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"
@@ -147,6 +159,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="248dp"
         android:layout_marginLeft="248dp"
+        android:onClick="clickListSort"
         android:text="     Distance    |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"

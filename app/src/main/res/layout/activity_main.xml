@@ -26,7 +26,7 @@
         android:layout_marginLeft="28dp"
         android:layout_marginTop="304dp"
         android:onClick="onClickRecords"
-        android:text="Records"
+        android:text="Totals"
         app:layout_constraintStart_toEndOf="@+id/historyButton"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -66,24 +66,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/typeImageSingle" />
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="75dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginLeft="96dp"
-        android:layout_marginTop="4dp"
-        android:onClick="onClickDelete"
-        android:text="Delete"
-        app:layout_constraintStart_toEndOf="@+id/likeCheck"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
-
     <TextView
         android:id="@+id/durationText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginTop="88dp"
         android:text="88:88"
         android:textColor="#FF0000"
@@ -159,8 +147,8 @@
 
     <CheckBox
         android:id="@+id/favCheck"
-        android:layout_width="46dp"
-        android:layout_height="49dp"
+        android:layout_width="47dp"
+        android:layout_height="48dp"
         android:layout_marginStart="88dp"
         android:layout_marginLeft="88dp"
         android:layout_marginTop="4dp"
@@ -169,6 +157,18 @@
         android:clickable="true"
         android:onClick="onCheckFav"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="4dp"
+        android:background="@mipmap/delete_icon"
+        android:onClick="onClickDelete"
+        app:layout_constraintStart_toEndOf="@+id/favCheck"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
 

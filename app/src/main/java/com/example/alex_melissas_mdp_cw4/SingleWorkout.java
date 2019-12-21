@@ -18,8 +18,11 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapView;
+
 public class SingleWorkout extends AppCompatActivity {
 
+    public MapView mapView;
     private String workout_id;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -27,7 +30,8 @@ public class SingleWorkout extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Bundle bundle = getIntent().getExtras();
         workout_id = bundle.getString("workout_id");
-
+        mapView = findViewById(R.id.mapView);
+        //mapView.onCreate();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_workout);
@@ -67,14 +71,14 @@ public class SingleWorkout extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     protected void readWorkout(){
         //Read actual recipe and instructions
-        Cursor recipeCursor = getContentResolver().query(WorkoutsContract.WORKOUTS, new String[]{ "*"},
+        Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS, new String[]{ "*"},
                 "_id = ?",new String[]{workout_id}, null, null);
 
-        if(recipeCursor.moveToFirst()){
+        if(c.moveToFirst()){
 
-            int type = recipeCursor.getInt(1);
-            int liked = recipeCursor.getInt(8);
-            int fav = recipeCursor.getInt(9);
+            int type = c.getInt(1);
+            int liked = c.getInt(8);
+            int fav = c.getInt(9);
 
             //set type
             switch(type){
@@ -84,7 +88,7 @@ public class SingleWorkout extends AppCompatActivity {
                 default: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon); break;
             }
 
-            String name = recipeCursor.getString(2);
+            String name = c.getString(2);
             if(name!="" && name!=null) ((EditText)findViewById(R.id.nameText)).setText(name);
             else ((EditText)findViewById(R.id.nameText)).setText("Name this workout");
 
@@ -94,12 +98,19 @@ public class SingleWorkout extends AppCompatActivity {
             if(fav==0) { ((CheckBox)findViewById(R.id.favCheck)).setChecked(false); }
             else { ((CheckBox)findViewById(R.id.favCheck)).setChecked(true); }
 
-            ((TextView)findViewById(R.id.datetimeText)).setText(recipeCursor.getString(3));
-            ((TextView)findViewById(R.id.durationText)).setText(recipeCursor.getString(4));
-            ((TextView)findViewById(R.id.distanceText)).setText(recipeCursor.getString(5)+"km");
-            ((TextView)findViewById(R.id.avgspeedText)).setText(recipeCursor.getString(6)+"km/h");
-            ((EditText)findViewById(R.id.notesText)).setText(recipeCursor.getString(10));
+            ((TextView)findViewById(R.id.datetimeText)).setText(c.getString(3));
+            ((TextView)findViewById(R.id.durationText)).setText(secToDuration(c.getInt(4)));
+            ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+"km");
+            ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+"km/h");
+            ((EditText)findViewById(R.id.notesText)).setText(c.getString(10));
         }
+    }
+
+    private String secToDuration(int sec){
+        int hours = sec/3600;
+        int mins = (sec-hours*3600)/60;
+        int secs = (sec-hours*3600)%60;
+        return String.format("%2d",hours)+":"+String.format("%02d",mins)+":"+String.format("%02d",secs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

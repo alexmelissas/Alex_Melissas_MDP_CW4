@@ -33,7 +33,7 @@ public class History extends AppCompatActivity {
         setTypeFilter(findViewById(R.id.allTypeRadio));
         setTimeFilter(findViewById(R.id.todayRadio));
         setListSort(findViewById(R.id.dateTimeSort));
-        readWorkouts(null,null);
+        querySelections();
     }
 
     //maybe savestate shit for current projection/selection/args etc?
@@ -43,7 +43,7 @@ public class History extends AppCompatActivity {
         setTypeFilter(findViewById(R.id.allTypeRadio));
         setTimeFilter(findViewById(R.id.todayRadio));
         setListSort(findViewById(R.id.dateTimeSort));
-        readWorkouts(null,null);
+        querySelections();
         super.onResume();
     }
 
@@ -52,8 +52,11 @@ public class History extends AppCompatActivity {
 
         final ListView historyList = (ListView) findViewById(R.id.historyList);
 
+        //add secondary datetime sorting to all other sortings
+        if(sortBy!="yyyymmdd DESC, hhmmss DESC") sortBy += ", yyyymmdd DESC, hhmmss DESC";
+
         Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS,null,
-                selection, selectionArgs, "fav DESC, " + sortBy, null);
+                selection, selectionArgs, sortBy, null);
         String[] columns = new String[]{"dateTime", "duration", "distance", "type", "fav"};
         int[] to = new int[]{R.id.datetimeBox, R.id.durationBox, R.id.distanceBox};
         SimpleCursorAdapter adapter = new WorkoutCursorAdapter(this, R.layout.workout_entry, c, columns, to);
@@ -145,12 +148,13 @@ public class History extends AppCompatActivity {
         ((TextView)findViewById(R.id.dateTimeSort)).setTypeface(null, Typeface.NORMAL);
         ((TextView)findViewById(R.id.durationSort)).setTypeface(null, Typeface.NORMAL);
         ((TextView)findViewById(R.id.distanceSort)).setTypeface(null, Typeface.NORMAL);
+        ((TextView)findViewById(R.id.favSort)).setTypeface(null, Typeface.NORMAL);
 
         switch(v.getId()){
             case R.id.typeSort: sortBy = "type DESC";
                 ((TextView)findViewById(R.id.typeSort)).setTypeface(null, Typeface.BOLD);
                 break;
-            case R.id.dateTimeSort: sortBy = "yyyymmdd DESC, dateTime DESC";
+            case R.id.dateTimeSort: sortBy = "yyyymmdd DESC, hhmmss DESC";
                 ((TextView)findViewById(R.id.dateTimeSort)).setTypeface(null, Typeface.BOLD);
                 break;
             case R.id.durationSort: sortBy = "duration DESC";
@@ -158,6 +162,9 @@ public class History extends AppCompatActivity {
                 break;
             case R.id.distanceSort: sortBy = "distance DESC";
                 ((TextView)findViewById(R.id.distanceSort)).setTypeface(null, Typeface.BOLD);
+                break;
+            case R.id.favSort: sortBy = "fav DESC";
+                ((TextView)findViewById(R.id.favSort)).setTypeface(null, Typeface.BOLD);
                 break;
         }
     }

@@ -23,12 +23,12 @@ public class WorkoutsContract {
     public static final String DISTANCE = "distance";
     public static final String DURATION = "duration";
     public static final String AVGSPEED = "avgSpeed";
-    public static final String IMGPATH = "imgPath";
+    public static final String IMAGE = "image";
     public static final String LIKED = "liked";
     public static final String FAV = "fav";
     public static final String NOTES = "notes";
-    public static final String WEEK = "week";
     public static final String YYYYMMDD = "yyyymmdd";
+    public static final String HHMMSS = "hhmmss";
 
     //Location stuff
     public static final String LON = "lon";

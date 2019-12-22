@@ -13,23 +13,26 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class MyLocationService extends Service {
 
     private final IBinder binder = new MyLocationBinder();
-    private final String CHANNEL_ID = "100";
     protected LocationManager locationManager;
     protected MyLocationListener locationListener;
     RemoteCallbackList<MyLocationBinder> remoteCallbackList = new RemoteCallbackList<MyLocationBinder>();
@@ -48,7 +51,7 @@ public class MyLocationService extends Service {
         locationListener = new MyLocationListener();
         try { locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1, 1,locationListener);
-        } catch(SecurityException e) { Log.d("g53mdp", e.toString()); }
+        } catch(SecurityException e) { Log.d("location error", e.toString()); }
 
         workoutActive = false;
         super.onCreate();
@@ -106,6 +109,11 @@ public class MyLocationService extends Service {
 
         public long startWorkout(int type) throws ParseException {
             if(workoutActive) return -1;
+            if(locationListener.getLocation() ==null) {
+                Toast.makeText(getApplicationContext(), "GPS wasn't ready. Please try again.",
+                        Toast.LENGTH_SHORT).show();
+                return -1;
+            }
             workoutType = type;
 
             notification();
@@ -114,54 +122,54 @@ public class MyLocationService extends Service {
 
             SimpleDateFormat ddMMyyhhmmss = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
             String currentDateTime = ddMMyyhhmmss.format(new Date());
+            //String currentDateTime = ddMMyyhhmmss.format(new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime());
+
             Date ymd = ddMMyyhhmmss.parse(currentDateTime);
             SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
             String currentReverseDate = yyyyMMdd.format(ymd);
 
+            SimpleDateFormat hhmmss = new SimpleDateFormat("hh:mm:ss",Locale.getDefault());
+            String currentTime = hhmmss.format(ymd);
+
+            Log.d("dates: ",currentDateTime+", "+currentReverseDate+", "+currentTime);
+
             ContentValues workoutValues = new ContentValues();
             workoutValues.put(WorkoutsContract.DATETIME, currentDateTime);
             workoutValues.put(WorkoutsContract.YYYYMMDD, currentReverseDate);
+            workoutValues.put(WorkoutsContract.HHMMSS, currentTime);
             workoutValues.put(WorkoutsContract.TYPE,workoutType);
-
-            workoutValues.put(WorkoutsContract.DURATION,"12:34");
-            workoutValues.put(WorkoutsContract.DISTANCE,"10.3");
-            workoutValues.put(WorkoutsContract.AVGSPEED,"3.4");
-
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             workout_id = "" + newWorkoutId;
 
         // 2. Insert new WorkoutsWithLocations entry, and Location if new.
 
             locationListener.reset();
-            return insertWorkoutWithLocationEntry();
+            return insertWorkoutWithLocationEntry(true);
         }
 
         public void stopWorkout(){
-
             float endDistance = locationListener.getDistance();
             float endDuration = locationListener.getDuration();
 
             ContentValues finishedWorkout = new ContentValues();
             finishedWorkout.put("duration",endDuration);
             finishedWorkout.put("distance",endDistance);
-            finishedWorkout.put("avgSpeed",endDistance/endDuration);
+            finishedWorkout.put("avgSpeed",(endDistance/endDuration)*1000);
             getContentResolver().update(WorkoutsContract.WORKOUTS,finishedWorkout,"_id=?",new String[]{workout_id});
-
-            insertWorkoutWithLocationEntry();
-
+            insertWorkoutWithLocationEntry(false);
             workoutActive = false;
             doCallBackCheckWorkout();
         }
 
-        private long insertWorkoutWithLocationEntry(){
+        private long insertWorkoutWithLocationEntry(boolean startStopPoint){
 
-            double start_lon = locationListener.getLocationCoords()[0];
-            double start_lat = locationListener.getLocationCoords()[1];
+            double lon = locationListener.getLocationCoords()[0];
+            double lat = locationListener.getLocationCoords()[1];
 
             //Check if this Location already exists
             Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
                     new String[]{WorkoutsContract._ID, WorkoutsContract.LON, WorkoutsContract.LAT},
-                    "lon = ? AND lat = ?", new String[]{""+start_lon,""+start_lat}, null);
+                    "lon = ? AND lat = ?", new String[]{""+lon,""+lat}, null);
 
             // If exists, just create new entry in Recipes x Ingredients table
             if (c.moveToFirst()) {
@@ -181,15 +189,16 @@ public class MyLocationService extends Service {
                 Log.d("Location: ", "NOT EXIST");
 
                 ContentValues locationValues = new ContentValues();
-                locationValues.put(WorkoutsContract.LON, start_lon);
-                locationValues.put(WorkoutsContract.LAT, start_lat);
+                locationValues.put(WorkoutsContract.LON, lon);
+                locationValues.put(WorkoutsContract.LAT, lat);
                 long newLocationId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.LOCATIONS, locationValues));
                 String newLocationIdString = "" + newLocationId;
 
                 ContentValues workoutsWithLocationsValues = new ContentValues();
                 workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, workout_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, newLocationIdString);
-                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
+                int startStop = (startStopPoint==true) ? 0 : 1;
+                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, startStop);
                 workoutActive = true;
                 doCallBackCheckWorkout();
                 return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
@@ -210,7 +219,7 @@ public class MyLocationService extends Service {
             CharSequence name = "channel name";
             String description = "channel description";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name,
+            NotificationChannel channel = new NotificationChannel("100", name,
                     importance);
             channel.setDescription(description);
             notificationManager.createNotificationChannel(channel);
@@ -223,10 +232,10 @@ public class MyLocationService extends Service {
         Intent intent = new Intent(this,MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this , CHANNEL_ID)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this , "100")
                 .setSmallIcon(R.drawable.like_on_icon)
                 .setContentTitle("FitnessX 2.0")
-                .setContentText("Click to return to tracker")
+                .setContentText("Workout in Progress")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         startForeground(NOTIFICATION_ID,mBuilder.build());

@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions( activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                  Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
 ///////////////////////////////////// G E N E R A L /////////////////////////////////////////////////////////////

@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,12 +20,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class SingleWorkout extends AppCompatActivity {
 
-    public MapView mapView;
+    final static public int RESULT_LOAD_IMG = 1;
     private String workout_id;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -30,14 +43,40 @@ public class SingleWorkout extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Bundle bundle = getIntent().getExtras();
         workout_id = bundle.getString("workout_id");
-        mapView = findViewById(R.id.mapView);
-        //mapView.onCreate();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_workout);
 
         readWorkout();
         attachListeners();
+    }
+
+    public void onClickPickImage(View v){
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            try {
+                final Uri imageUri = data.getData();
+                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                // SAVE BITMAP TO BLOB IN DB
+
+                ((ImageView)findViewById(R.id.imageView)).setImageBitmap(selectedImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();}
+                //Toast.makeText(PostImage.this, "Something went wrong", Toast.LENGTH_LONG).show();
+
+        }else {
+            //Toast.makeText(PostImage.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void attachListeners(){
@@ -100,8 +139,8 @@ public class SingleWorkout extends AppCompatActivity {
 
             ((TextView)findViewById(R.id.datetimeText)).setText(c.getString(3));
             ((TextView)findViewById(R.id.durationText)).setText(secToDuration(c.getInt(4)));
-            ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+"km");
-            ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+"km/h");
+            ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+" km");
+            ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+" km/h");
             ((EditText)findViewById(R.id.notesText)).setText(c.getString(10));
         }
     }

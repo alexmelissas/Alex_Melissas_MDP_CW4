@@ -57,13 +57,12 @@ public class WorkoutsProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
-        if(selectionArgs!=null) for(String s : selectionArgs) Log.d("SA: ", s);
 
         switch(uriMatcher.match(uri)) {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
             case 2: return db.query("locations", projection, selection, selectionArgs, null, null, sortOrder);
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
-            case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY fav DESC, dateTime DESC LIMIT 2",selectionArgs);
+            case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY yyyymmdd DESC, hhmmss DESC LIMIT 2",selectionArgs);
             case 5: return db.rawQuery("SELECT strftime('%W', 'now', 'localtime', 'weekday 0', '-6 days') FROM workouts;",null);
 
 //            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+

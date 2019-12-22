@@ -8,46 +8,35 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="144dp"
-        android:layout_height="143dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="116dp"
+        android:layout_marginRight="116dp"
+        android:clickable="true"
+        android:onClick="onClickPickImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="369dp"
-        android:layout_height="309dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/notesText"
+        app:srcCompat="@mipmap/add_photo_big_square" />
 
     <ImageView
         android:id="@+id/typeImageSingle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/run_icon" />
 
     <TextView
         android:id="@+id/datetimeText"
-        android:layout_width="105dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="166dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="32dp"
         android:text="88/88/88 | 88:88"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/typeImageSingle"
@@ -55,29 +44,16 @@
 
     <EditText
         android:id="@+id/nameText"
-        android:layout_width="220dp"
-        android:layout_height="45dp"
+        android:layout_width="378dp"
+        android:layout_height="46dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name here"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/typeImageSingle" />
-
-    <TextView
-        android:id="@+id/durationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginLeft="28dp"
-        android:layout_marginTop="88dp"
-        android:text="88:88"
-        android:textColor="#FF0000"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
     <EditText
         android:id="@+id/notesText"
@@ -85,13 +61,14 @@
         android:layout_height="102dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/distanceText" />
 
@@ -105,70 +82,92 @@
         app:layout_constraintBottom_toTopOf="@+id/notesText"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/distanceText"
-        android:layout_width="97dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="88dp"
-        android:text="88.88km"
-        android:textColor="#03A6F8"
-        android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@+id/durationText"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
+    <CheckBox
+        android:id="@+id/likeCheck"
+        android:layout_width="46dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="19dp"
+        android:button="@drawable/likebutton"
+        android:checked="false"
+        android:clickable="true"
+        android:onClick="onCheckLike"
+        app:layout_constraintStart_toEndOf="@+id/deleteButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/favCheck"
+        android:layout_width="47dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:button="@drawable/favbutton"
+        android:checked="false"
+        android:clickable="true"
+        android:onClick="onCheckFav"
+        app:layout_constraintStart_toEndOf="@+id/likeCheck"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="18dp"
+        android:background="@mipmap/delete_icon"
+        android:onClick="onClickDelete"
+        app:layout_constraintStart_toEndOf="@+id/datetimeText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="378dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameText"
+        app:srcCompat="@color/common_google_signin_btn_text_light_disabled" />
 
     <TextView
         android:id="@+id/avgspeedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="36dp"
         android:text="6.0 km/h"
         android:textColor="#038513"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/distanceText"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
-    <CheckBox
-        android:id="@+id/likeCheck"
-        android:layout_width="46dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="4dp"
-        android:button="@drawable/likebutton"
-        android:checked="false"
-        android:clickable="true"
-        android:onClick="onCheckLike"
+    <TextView
+        android:id="@+id/durationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="36dp"
+        android:text="88:88"
+        android:textColor="#FF0000"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
-    <CheckBox
-        android:id="@+id/favCheck"
-        android:layout_width="47dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
-        android:layout_marginTop="4dp"
-        android:button="@drawable/favbutton"
-        android:checked="false"
-        android:clickable="true"
-        android:onClick="onCheckFav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameText" />
-
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginTop="4dp"
-        android:background="@mipmap/delete_icon"
-        android:onClick="onClickDelete"
-        app:layout_constraintStart_toEndOf="@+id/favCheck"
+    <TextView
+        android:id="@+id/distanceText"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="36dp"
+        android:text="88.88km"
+        android:textColor="#03A6F8"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/durationText"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
 

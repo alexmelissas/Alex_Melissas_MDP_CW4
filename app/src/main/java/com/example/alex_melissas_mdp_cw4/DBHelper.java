@@ -20,11 +20,12 @@ public class DBHelper extends SQLiteOpenHelper {
                         + "duration INTEGER, "
                         + "distance FLOAT, "
                         + "avgSpeed FLOAT, "
-                        + "imgPath VARCHAR(128), "
+                        + "image BLOB, "
                         + "liked INTEGER, "
                         + "fav INTEGER, "
                         + "notes TEXT, "
-                        + "yyyymmdd VARCHAR(10));"
+                        + "yyyymmdd VARCHAR(10), " +
+                        "hhmmss VARCHAR(10));"
 
         );
 

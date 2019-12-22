@@ -45,6 +45,7 @@ public class SingleWorkout extends AppCompatActivity {
     }
 
     @Override
+    //image handling
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
@@ -56,7 +57,7 @@ public class SingleWorkout extends AppCompatActivity {
                 ((ImageView)findViewById(R.id.imagePickButton)).setImageBitmap(selectedImage);
 
                 ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-                selectedImage.compress(Bitmap.CompressFormat.PNG,100,compressed);
+                selectedImage.compress(Bitmap.CompressFormat.JPEG,100,compressed);
                 byte[] image = compressed.toByteArray();
 
                 ContentValues photo = new ContentValues();
@@ -65,9 +66,9 @@ public class SingleWorkout extends AppCompatActivity {
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-                Toast.makeText(SingleWorkout.this, "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SingleWorkout.this, "Image selection error", Toast.LENGTH_SHORT).show();
             }
-        }else Toast.makeText(SingleWorkout.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
+        }else Toast.makeText(SingleWorkout.this, "No image selected",Toast.LENGTH_LONG).show();
     }
 
     private void attachListeners(){
@@ -128,7 +129,7 @@ public class SingleWorkout extends AppCompatActivity {
             if(fav==0) { ((CheckBox)findViewById(R.id.favCheck)).setChecked(false); }
             else { ((CheckBox)findViewById(R.id.favCheck)).setChecked(true); }
 
-            ((TextView)findViewById(R.id.datetimeText)).setText(c.getString(3));
+            ((TextView)findViewById(R.id.datetimeText)).setText(c.getString(3).substring(0,16));
             ((TextView)findViewById(R.id.durationText)).setText(secToDuration(c.getInt(4)));
             ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+" km");
             ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+" km/h");

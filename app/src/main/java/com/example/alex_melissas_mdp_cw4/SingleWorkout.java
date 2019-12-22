@@ -18,18 +18,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -51,12 +44,6 @@ public class SingleWorkout extends AppCompatActivity {
         attachListeners();
     }
 
-    public void onClickPickImage(View v){
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
-    }
-
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
@@ -66,17 +53,21 @@ public class SingleWorkout extends AppCompatActivity {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                ((ImageView)findViewById(R.id.imagePickButton)).setImageBitmap(selectedImage);
 
-                // SAVE BITMAP TO BLOB IN DB
+                ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+                selectedImage.compress(Bitmap.CompressFormat.PNG,100,compressed);
+                byte[] image = compressed.toByteArray();
 
-                ((ImageView)findViewById(R.id.imageView)).setImageBitmap(selectedImage);
+                ContentValues photo = new ContentValues();
+                photo.put("image",image);
+                getContentResolver().update(WorkoutsContract.WORKOUTS,photo,"_id=?",new String[]{workout_id});
+
             } catch (FileNotFoundException e) {
-                e.printStackTrace();}
-                //Toast.makeText(PostImage.this, "Something went wrong", Toast.LENGTH_LONG).show();
-
-        }else {
-            //Toast.makeText(PostImage.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
-        }
+                e.printStackTrace();
+                Toast.makeText(SingleWorkout.this, "Error", Toast.LENGTH_SHORT).show();
+            }
+        }else Toast.makeText(SingleWorkout.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
     }
 
     private void attachListeners(){
@@ -142,6 +133,12 @@ public class SingleWorkout extends AppCompatActivity {
             ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+" km");
             ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+" km/h");
             ((EditText)findViewById(R.id.notesText)).setText(c.getString(10));
+
+            if(c.getBlob(7)==null) return;
+
+            ByteArrayInputStream imageStream = new ByteArrayInputStream(c.getBlob(7));
+            Bitmap imageBM= BitmapFactory.decodeStream(imageStream);
+            ((ImageView)findViewById(R.id.imagePickButton)).setImageBitmap(imageBM);
         }
     }
 
@@ -176,6 +173,12 @@ public class SingleWorkout extends AppCompatActivity {
         if(getContentResolver().delete(WorkoutsContract.WORKOUTS,"_id = ?",new String[]{workout_id})==0){
             startActivity(new Intent(SingleWorkout.this,MainActivity.class));
         } else Log.d("Delete: ","Error");
+    }
+
+    public void onClickPickImage(View v){
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
 
 }

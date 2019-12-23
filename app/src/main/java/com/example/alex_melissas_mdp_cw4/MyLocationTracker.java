@@ -27,6 +27,11 @@ public class MyLocationTracker {
         else return singleton;
     }
 
+    //Singleton destructor
+    public static void destroyTracker(){
+        singleton=null;
+    }
+
     // Update current location to new one, update workout distance and duration
     public void updateLocation(Location location){
         if(currentLocation!=null) currentDistance += currentLocation.distanceTo(location);

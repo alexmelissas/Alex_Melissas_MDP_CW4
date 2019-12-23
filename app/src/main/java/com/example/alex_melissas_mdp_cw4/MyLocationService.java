@@ -10,13 +10,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
+import android.widget.Switch;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.text.ParseException;
@@ -31,6 +34,7 @@ public class MyLocationService extends Service {
     protected MyLocationListener locationListener;
     protected MyLocationReceiver locationReceiver;
     RemoteCallbackList<MyLocationBinder> remoteCallbackList = new RemoteCallbackList<MyLocationBinder>();
+    NotificationCompat.Builder builder;
 
     String workout_id;
     boolean workoutActive;
@@ -127,7 +131,7 @@ public class MyLocationService extends Service {
             }
             workoutType = type;
 
-            notification();
+
 
         // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
@@ -177,7 +181,7 @@ public class MyLocationService extends Service {
         }
 
         // Insert new entry to WorkoutsWithLocations table, with Workout id and location id, and
-        // boolean if location was start or end point of workout
+        // boolean if location was start or end point of workout. Also start notification process.
         private long insertWorkoutWithLocationEntry(boolean startStopPoint){
 
             double lon = MyLocationTracker.requestLocationTracker().getLocationCoords()[0];
@@ -187,6 +191,8 @@ public class MyLocationService extends Service {
             Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
                     new String[]{WorkoutsContract._ID, WorkoutsContract.LON, WorkoutsContract.LAT},
                     "lon = ? AND lat = ?", new String[]{""+lon,""+lat}, null);
+
+            long returnID;
 
             // If exists, just create new entry in WorkoutsWithLocations table
             if (c.moveToFirst()) {
@@ -198,7 +204,7 @@ public class MyLocationService extends Service {
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
                 workoutActive = true;
                 doCallBackCheckWorkout();
-                return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
+                returnID = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
 
                 // If not exists, create new entry for it in Locations and then new entry for wID, lID in WwL table
             } else {
@@ -218,45 +224,91 @@ public class MyLocationService extends Service {
                 workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, startStop);
                 workoutActive = true;
                 doCallBackCheckWorkout();
-                return ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
+                returnID = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
             }
+
+        // If starting workout, send first notification and initiate the updating of notifications
+            if(startStopPoint) notification(true);
+
+            return returnID;
         }
     }
 
     ///////////////////////////////////// N O T I F I C A T I O N S ///////////////////////////////////
 
     // Create and display a notification while a workout is active, that user can click on and return to
-    // the app.
-    public void notification(){
-
-        //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
-        // ALSO ABLE TO RETURN TO APP (WHERE YOU CAN STOP WORKOUT / STOP FROM NOTIFICATION EVEN?)
+    // the app. Renewable to update workout values.
+    public void notification(boolean firstTime){
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "channel name";
-            String description = "channel description";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("100", name,
-                    importance);
-            channel.setDescription(description);
-            notificationManager.createNotificationChannel(channel);
+        if(firstTime) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                CharSequence name = "channel name";
+                String description = "channel description";
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel("100", name,
+                        importance);
+                channel.setDescription(description);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            int NOTIFICATION_ID = 001;
+            Intent intent = new Intent(this,MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
+            builder = new NotificationCompat.Builder(this , "100")
+                    .setSmallIcon(R.mipmap.jog_icon)
+                    .setColor(Color.RED)
+                    .setContentTitle("FitnessX 2.0")
+                    .setContentText(makeNotificationText())
+                    .setContentIntent(pendingIntent)
+                    .setOnlyAlertOnce(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            startForeground(NOTIFICATION_ID,builder.build());
+            startUpdateNotifications();
         }
+        else{
+            int NOTIFICATION_ID = 001;
+            builder.setContentText(makeNotificationText());
+            startForeground(NOTIFICATION_ID, builder.build());
+        }
+    }
 
-        //EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE
-        // ALSO ABLE TO RETURN TO APP OR STOP WORKOUT
+    // Format a string for the text of the notification with all relevant stats
+    private String makeNotificationText(){
+        String workout_type = "None";
+        switch (workoutType){
+            case 0: workout_type="Walk";break;
+            case 1: workout_type="Jog";break;
+            case 2: workout_type="Run";break;
+            default:break;
+        }
+        String distance = String.format("%02.2f",MyLocationTracker.requestLocationTracker().getDistance())+"km";
+        String duration = secToDuration((int)(MyLocationTracker.requestLocationTracker().getDuration()));
+        return "In progress: " + workout_type +" | "+duration+" | "+distance;
+    }
 
-        int NOTIFICATION_ID = 001;
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this , "100")
-                .setSmallIcon(R.drawable.like_on_icon)
-                .setContentTitle("FitnessX 2.0")
-                .setContentText("Workout in Progress")
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        startForeground(NOTIFICATION_ID,mBuilder.build());
+    // Convert raw seconds int to hh:mm:ss string
+    private String secToDuration(int sec){
+        int hours = sec/3600;
+        int mins = (sec-hours*3600)/60;
+        int secs = (sec-hours*3600)%60;
+        return String.format("%2d",hours)+":"+String.format("%02d",mins)+":"+String.format("%02d",secs);
+    }
+
+    // Handler to keep notification updated with workout progress
+    private void startUpdateNotifications(){
+        final Handler notificationUpdateHandler = new Handler();
+        notificationUpdateHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(workoutActive) {
+                    notification(false);
+                    notificationUpdateHandler.postDelayed(this,500);
+                }
+            }
+        });
     }
 }

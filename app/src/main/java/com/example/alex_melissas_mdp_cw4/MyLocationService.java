@@ -8,26 +8,20 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.core.app.NotificationCompat;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class MyLocationService extends Service {
@@ -35,6 +29,7 @@ public class MyLocationService extends Service {
     private final IBinder binder = new MyLocationBinder();
     protected LocationManager locationManager;
     protected MyLocationListener locationListener;
+    protected MyLocationReceiver locationReceiver;
     RemoteCallbackList<MyLocationBinder> remoteCallbackList = new RemoteCallbackList<MyLocationBinder>();
 
     String workout_id;
@@ -48,10 +43,15 @@ public class MyLocationService extends Service {
     public void onCreate() {
         Log.d("¬¬¬¬¬¬¬¬From Service: ", "onCreate'd");
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
+
+        locationListener = new MyLocationListener(getApplicationContext());
         try { locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1, 1,locationListener);
         } catch(SecurityException e) { Log.d("location error", e.toString()); }
+
+        locationReceiver = new MyLocationReceiver();
+        IntentFilter filter = new IntentFilter("com.example.alex_melissas_mdp_cw4.LOCATION_BROADCAST");
+        getApplicationContext().registerReceiver(locationReceiver, filter);
 
         workoutActive = false;
         super.onCreate();
@@ -60,6 +60,8 @@ public class MyLocationService extends Service {
     public void onDestroy(){
         Log.d("From Service: ","Service dead");
         stopForeground(true);
+        IntentFilter filter = new IntentFilter("com.example.alex_melissas_mdp_cw4.LOCATION_BROADCAST");
+        getApplicationContext().registerReceiver(locationReceiver, filter);
         super.onDestroy();
     }
 
@@ -76,7 +78,6 @@ public class MyLocationService extends Service {
         }
         remoteCallbackList.finishBroadcast();
     }
-
     ////////////////////////////////////////// B I N D E R ////////////////////////////////////////////
 
     @Override
@@ -109,7 +110,7 @@ public class MyLocationService extends Service {
 
         public long startWorkout(int type) throws ParseException {
             if(workoutActive) return -1;
-            if(locationListener.getLocation() ==null) {
+            if(MyLocationTracker.requestLocationTracker().getLocation() == null) {
                 Toast.makeText(getApplicationContext(), "GPS wasn't ready. Please try again.",
                         Toast.LENGTH_SHORT).show();
                 return -1;
@@ -143,13 +144,13 @@ public class MyLocationService extends Service {
 
         // 2. Insert new WorkoutsWithLocations entry, and Location if new.
 
-            locationListener.reset();
+            MyLocationTracker.requestLocationTracker().reset();
             return insertWorkoutWithLocationEntry(true);
         }
 
         public void stopWorkout(){
-            float endDistance = locationListener.getDistance();
-            float endDuration = locationListener.getDuration();
+            float endDistance = MyLocationTracker.requestLocationTracker().getDistance();
+            float endDuration = MyLocationTracker.requestLocationTracker().getDuration();
 
             ContentValues finishedWorkout = new ContentValues();
             finishedWorkout.put("duration",endDuration);
@@ -163,8 +164,8 @@ public class MyLocationService extends Service {
 
         private long insertWorkoutWithLocationEntry(boolean startStopPoint){
 
-            double lon = locationListener.getLocationCoords()[0];
-            double lat = locationListener.getLocationCoords()[1];
+            double lon = MyLocationTracker.requestLocationTracker().getLocationCoords()[0];
+            double lat = MyLocationTracker.requestLocationTracker().getLocationCoords()[1];
 
             //Check if this Location already exists
             Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,

@@ -40,6 +40,7 @@ public class MyLocationService extends Service {
 
     @Override
 
+    // onCreate, also setup the Location: Manager, Listener, and (Broadcast)Receiver.
     public void onCreate() {
         Log.d("¬¬¬¬¬¬¬¬From Service: ", "onCreate'd");
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -57,6 +58,7 @@ public class MyLocationService extends Service {
         super.onCreate();
     }
 
+    //onDestroy, also stop foreground activity, remove notification and deregister the receiver
     public void onDestroy(){
         Log.d("From Service: ","Service dead");
         stopForeground(true);
@@ -65,6 +67,7 @@ public class MyLocationService extends Service {
         super.onDestroy();
     }
 
+    //make service sticky
     public int onStartCommand(Intent intent, int flags, int startId) {return Service.START_STICKY;}
 
     /////////////////////////////////// C A L L B A C K S  ////////////////////////////////////////////
@@ -93,13 +96,14 @@ public class MyLocationService extends Service {
         @Override
         public IBinder asBinder(){return this;}
 
+        //Standard callback registering
         public void registerCallback(MyLocationCallback myLocationCallback) {
             this.myLocationCallback = myLocationCallback;
             remoteCallbackList.register(MyLocationBinder.this);
             Log.d("binder","registered callback");
             doCallBackCheckWorkout();
         }
-
+        //Standard callback unregistering, also if no workout is active => kill service
         public void unregisterCallback(MyLocationCallback myLocationCallback) {
             remoteCallbackList.unregister(MyLocationBinder.this);
             Log.d("binder","unregistered callback");
@@ -108,8 +112,14 @@ public class MyLocationService extends Service {
 
         public boolean getState(){ if(workoutActive)return true; return false; }
 
+        // Initiate workout
         public long startWorkout(int type) throws ParseException {
+
+            // Only 1 workout allowed at a time
             if(workoutActive) return -1;
+
+            // Error handling - if GPS signal has issues or havent received updates before this method
+            // is called then warn user and exit
             if(MyLocationTracker.requestLocationTracker().getLocation() == null) {
                 Toast.makeText(getApplicationContext(), "GPS wasn't ready. Please try again.",
                         Toast.LENGTH_SHORT).show();
@@ -142,26 +152,32 @@ public class MyLocationService extends Service {
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             workout_id = "" + newWorkoutId;
 
-        // 2. Insert new WorkoutsWithLocations entry, and Location if new.
+        // 2. Insert new WorkoutsWithLocations entry (location as start point of workout), and Location (insert only if new location).
 
             MyLocationTracker.requestLocationTracker().reset();
             return insertWorkoutWithLocationEntry(true);
         }
 
+        // When user stops workout - get all workout data from MyLocationTracker, store all data in relevant table in db
         public void stopWorkout(){
             float endDistance = MyLocationTracker.requestLocationTracker().getDistance();
             float endDuration = MyLocationTracker.requestLocationTracker().getDuration();
 
+            // Update workout data with final values
             ContentValues finishedWorkout = new ContentValues();
             finishedWorkout.put("duration",endDuration);
             finishedWorkout.put("distance",endDistance);
             finishedWorkout.put("avgSpeed",(endDistance/endDuration)*1000);
             getContentResolver().update(WorkoutsContract.WORKOUTS,finishedWorkout,"_id=?",new String[]{workout_id});
+
+            // Insert new location as end point of workout
             insertWorkoutWithLocationEntry(false);
             workoutActive = false;
             doCallBackCheckWorkout();
         }
 
+        // Insert new entry to WorkoutsWithLocations table, with Workout id and location id, and
+        // boolean if location was start or end point of workout
         private long insertWorkoutWithLocationEntry(boolean startStopPoint){
 
             double lon = MyLocationTracker.requestLocationTracker().getLocationCoords()[0];
@@ -172,7 +188,7 @@ public class MyLocationService extends Service {
                     new String[]{WorkoutsContract._ID, WorkoutsContract.LON, WorkoutsContract.LAT},
                     "lon = ? AND lat = ?", new String[]{""+lon,""+lat}, null);
 
-            // If exists, just create new entry in Recipes x Ingredients table
+            // If exists, just create new entry in WorkoutsWithLocations table
             if (c.moveToFirst()) {
                 String location_id = "" + c.getInt(0);
                 Log.d("Location EXISTS: ", location_id);
@@ -209,6 +225,8 @@ public class MyLocationService extends Service {
 
     ///////////////////////////////////// N O T I F I C A T I O N S ///////////////////////////////////
 
+    // Create and display a notification while a workout is active, that user can click on and return to
+    // the app.
     public void notification(){
 
         //-- EG. WHEN SERVICE RUNNING, SHOW CURRENT WORKOUT: TYPE / DURATION / DISTANCE

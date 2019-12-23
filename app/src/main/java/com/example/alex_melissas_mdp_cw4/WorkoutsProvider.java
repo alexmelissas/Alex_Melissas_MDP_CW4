@@ -20,6 +20,7 @@ public class WorkoutsProvider extends ContentProvider {
     private DBHelper dbHelper;
     private static final UriMatcher uriMatcher;
 
+    //URI matching to codes
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workouts", 1);
@@ -36,6 +37,7 @@ public class WorkoutsProvider extends ContentProvider {
         return true;
     }
 
+    // Helper method to get table name from Uri match
     private String getTableFromUri(@Nullable Uri uri){
         switch(uriMatcher.match(uri)){
             case 1: return "workouts";
@@ -56,7 +58,7 @@ public class WorkoutsProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
+        //Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
 
         switch(uriMatcher.match(uri)) {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
@@ -64,17 +66,9 @@ public class WorkoutsProvider extends ContentProvider {
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
             case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY yyyymmdd DESC, hhmmss DESC LIMIT 2",selectionArgs);
             case 5: return db.rawQuery("SELECT strftime('%W', 'now', 'localtime', 'weekday 0', '-6 days') FROM workouts;",null);
-
-//            case 4: return db.rawQuery("select r._id as recipe_id, r.name, ri.ingredient_id, i.ingredientname "+
-//                            "from recipes r "+
-//                            "join recipe_ingredients ri on (r._id = ri.recipe_id)"+
-//                            "join ingredients i on (ri.ingredient_id = i._id) where r._id == ?",
-//                    selectionArgs);
-
             default: return null;
         }
     }
-
 
     @Nullable
     @Override
@@ -94,7 +88,7 @@ public class WorkoutsProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String tableName = getTableFromUri(uri);
 
-        //if deleting workout then check if nothing else uses a location => delete location
+        //if deleting workout then check if nothing else uses a location => if so, delete location
         if (tableName == "workouts") {
             ArrayList<String> ids_of_locations = new ArrayList<>();
             Cursor c = db.query("workoutswithlocations", new String[]{"workout_id", "location_id"}, "workout_id = ?",

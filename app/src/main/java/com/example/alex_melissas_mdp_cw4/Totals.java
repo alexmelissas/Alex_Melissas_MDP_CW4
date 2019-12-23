@@ -20,6 +20,7 @@ public class Totals extends AppCompatActivity {
     private String timeFilter;
     private String typeFilter;
 
+    // Standard onCreate, also reset selection radios
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class Totals extends AppCompatActivity {
         super.onResume();
     }
 
+    // Calculate total distance, duration and speed values from specified query rows
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readCalculateTotals(String selection, String[] selectionArgs) {
         Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS,null,
@@ -64,6 +66,7 @@ public class Totals extends AppCompatActivity {
         ((TextView)findViewById(R.id.speedTotalText)).setText(String.format("%.2f",totalSpeedAvg)+"km/h");
     }
 
+    // Convert raw seconds int to hh:mm:ss format string
     private String secToDuration(int sec){
         int hours = sec/3600;
         int mins = (sec-hours*3600)/60;
@@ -84,6 +87,7 @@ public class Totals extends AppCompatActivity {
 //        }
 //    }
 
+    //Shape the query selection and arguments according to selected time/workout type filters
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void querySelections() {
 
@@ -114,6 +118,7 @@ public class Totals extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void clickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
 
+    // Set time filter based on selected radio
     private void setTimeFilter(View v){
         switch(v.getId()){
             case R.id.todayRadioT: timeFilter = "today"; break;
@@ -124,6 +129,7 @@ public class Totals extends AppCompatActivity {
         }
     }
 
+    // Set workout type filter based on selected radio
     private void setTypeFilter(View v){
         switch(v.getId()){
             case R.id.allTypeRadioT: typeFilter = "-1"; break;
@@ -133,7 +139,7 @@ public class Totals extends AppCompatActivity {
         }
     }
 
-    //make the time selection part
+    // Shape the arguments of time selection
     private String pickTime(){
         String selection = "";
         switch(timeFilter){
@@ -146,7 +152,7 @@ public class Totals extends AppCompatActivity {
         return selection;
     }
 
-    //split date for
+    // Date formatting
     private String formatDate() {
         SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String currentReverseDate = yyyyMMdd.format(new Date());
@@ -162,6 +168,7 @@ public class Totals extends AppCompatActivity {
         return date;
     }
 
+    // Get the current week-of-year
     private int getCurrentWeek(){
         Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK,
                 null,null,null,null);

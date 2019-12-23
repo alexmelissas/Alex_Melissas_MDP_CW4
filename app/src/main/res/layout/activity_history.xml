@@ -25,28 +25,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:onClick="clickTimeFilter"
+            android:onClick="onClickTimeFilter"
             android:text="Today" />
 
         <RadioButton
             android:id="@+id/weekRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeFilter"
+            android:onClick="onClickTimeFilter"
             android:text="Week" />
 
         <RadioButton
             android:id="@+id/monthRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeFilter"
+            android:onClick="onClickTimeFilter"
             android:text="Month" />
 
         <RadioButton
             android:id="@+id/yearRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTimeFilter"
+            android:onClick="onClickTimeFilter"
             android:text="Year" />
 
         <RadioButton
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTimeFilter"
+            android:onClick="onClickTimeFilter"
             android:text="All Time" />
     </RadioGroup>
 
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:onClick="clickTypeFilter"
+            android:onClick="onClickTypeFilter"
             android:text="All Types" />
 
         <RadioButton
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTypeFilter"
+            android:onClick="onClickTypeFilter"
             android:text="Walk" />
 
         <RadioButton
@@ -92,14 +92,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="clickTypeFilter"
+            android:onClick="onClickTypeFilter"
             android:text="Jog" />
 
         <RadioButton
             android:id="@+id/runRadio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="clickTypeFilter"
+            android:onClick="onClickTypeFilter"
             android:text="Run" />
     </RadioGroup>
 
@@ -123,7 +123,7 @@
         android:layout_width="56dp"
         android:layout_height="19dp"
         android:clickable="true"
-        android:onClick="clickListSort"
+        android:onClick="onClickListSort"
         android:text="   Type   |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/divider"
@@ -135,7 +135,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="56dp"
         android:layout_marginLeft="56dp"
-        android:onClick="clickListSort"
+        android:onClick="onClickListSort"
         android:text="       Date/Time        |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"
@@ -147,7 +147,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="176dp"
         android:layout_marginLeft="176dp"
-        android:onClick="clickListSort"
+        android:onClick="onClickListSort"
         android:text=" Duration  |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"
@@ -159,7 +159,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="248dp"
         android:layout_marginLeft="248dp"
-        android:onClick="clickListSort"
+        android:onClick="onClickListSort"
         android:text="     Distance    |"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/typeSort"
@@ -169,7 +169,7 @@
         android:id="@+id/favSort"
         android:layout_width="40dp"
         android:layout_height="19dp"
-        android:onClick="clickListSort"
+        android:onClick="onClickListSort"
         android:text=" Favs"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/distanceSort"

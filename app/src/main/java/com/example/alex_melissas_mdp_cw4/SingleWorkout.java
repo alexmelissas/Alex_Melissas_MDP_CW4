@@ -31,6 +31,7 @@ public class SingleWorkout extends AppCompatActivity {
     final static public int RESULT_LOAD_IMG = 1;
     private String workout_id;
 
+    //Standard onCreate, also read the workout data and attach listeners to textfields
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,8 @@ public class SingleWorkout extends AppCompatActivity {
         attachListeners();
     }
 
+    // Handle storing/loading image to/from db, and displaying it in the imageView
     @Override
-    //image handling
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
@@ -71,6 +72,7 @@ public class SingleWorkout extends AppCompatActivity {
         }else Toast.makeText(SingleWorkout.this, "No image selected",Toast.LENGTH_LONG).show();
     }
 
+    //Attach listeners to textfields, to automatically save changes to db onTextChange
     private void attachListeners(){
         final EditText notesText = (EditText)findViewById(R.id.notesText);
         final EditText nameText = (EditText)findViewById(R.id.nameText);
@@ -99,6 +101,7 @@ public class SingleWorkout extends AppCompatActivity {
         });
     }
 
+    // Query db for workout data and fill all relevant Activity fields
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     protected void readWorkout(){
         //Read actual recipe and instructions
@@ -111,7 +114,7 @@ public class SingleWorkout extends AppCompatActivity {
             int liked = c.getInt(8);
             int fav = c.getInt(9);
 
-            //set type
+            // TYPE-ICON
             switch(type){
                 case 0: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon); break;
                 case 1: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.jog_icon); break;
@@ -135,6 +138,8 @@ public class SingleWorkout extends AppCompatActivity {
             ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+" km/h");
             ((EditText)findViewById(R.id.notesText)).setText(c.getString(10));
 
+            // IMAGE
+
             if(c.getBlob(7)==null) return;
 
             ByteArrayInputStream imageStream = new ByteArrayInputStream(c.getBlob(7));
@@ -143,6 +148,7 @@ public class SingleWorkout extends AppCompatActivity {
         }
     }
 
+    // Convert raw seconds int to hh:mm:ss string
     private String secToDuration(int sec){
         int hours = sec/3600;
         int mins = (sec-hours*3600)/60;
@@ -150,6 +156,7 @@ public class SingleWorkout extends AppCompatActivity {
         return String.format("%2d",hours)+":"+String.format("%02d",mins)+":"+String.format("%02d",secs);
     }
 
+    // Handle favourite checkbox
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onCheckFav(View v){
         int favValue;
@@ -160,6 +167,7 @@ public class SingleWorkout extends AppCompatActivity {
         readWorkout();
     }
 
+    // Handle like checkbox
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onCheckLike(View v){
         int likeValue;
@@ -170,12 +178,14 @@ public class SingleWorkout extends AppCompatActivity {
         readWorkout();
     }
 
+    // Delete row from db
     public void onClickDelete(View v){
         if(getContentResolver().delete(WorkoutsContract.WORKOUTS,"_id = ?",new String[]{workout_id})==0){
             startActivity(new Intent(SingleWorkout.this,MainActivity.class));
         } else Log.d("Delete: ","Error");
     }
 
+    // Prompt user to pick image from files
     public void onClickPickImage(View v){
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");

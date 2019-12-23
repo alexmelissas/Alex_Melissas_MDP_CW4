@@ -12,8 +12,6 @@ public class WorkoutsContract {
     public static final Uri RECENTS = Uri.parse("content://"+AUTHORITY+"/recents");
     public static final Uri GETCURRRENTWEEK = Uri.parse("content://"+AUTHORITY+"/getcurrentweek");
 
-    // HAVE JOINS FOR RECORDS eg. MOST DISTANCE / LONGEST WORKOUTS
-
     public static final String _ID = "_id";
     public static final String TYPE = "type"; // 0=Walk, 1=Jog, 2=Run
     public static final String NAME = "name";

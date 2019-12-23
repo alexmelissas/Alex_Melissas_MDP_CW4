@@ -2,7 +2,6 @@ package com.example.alex_melissas_mdp_cw4;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +9,12 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-// https://stackoverflow.com/questions/18474634/android-custom-simplecursoradapter-with-image-from-file-with-path-in-database
 public class WorkoutCursorAdapter extends SimpleCursorAdapter {
-    private LayoutInflater mLayoutInflater;
+    private LayoutInflater layoutInflater;
     private Context context;
     private int layout;
 
+    // Define components of the row created
     private class ViewHolder {
         ImageView typeImage;
         TextView dateTimeBox;
@@ -32,21 +31,23 @@ public class WorkoutCursorAdapter extends SimpleCursorAdapter {
         }
     }
 
-    public WorkoutCursorAdapter (Context ctx, int layout, Cursor c, String[] from, int[] to) {
-        super(ctx, layout, c, from, to);
-        this.context = ctx;
-        this.layout = layout;
-        mLayoutInflater = LayoutInflater.from(ctx);
+    // Constructor
+    public WorkoutCursorAdapter (Context argContext, int argLayout, Cursor c, String[] from, int[] to) {
+        super(argContext, argLayout, c, from, to);
+        layoutInflater = LayoutInflater.from(argContext);
+        layout = argLayout;
+        context = argContext;
     }
 
-
+    //Inflate new view row
     @Override
     public View newView(Context ctx, Cursor cursor, ViewGroup parent) {
-        View v = mLayoutInflater.inflate(layout, parent, false);
+        View v = layoutInflater.inflate(layout, parent, false);
         v.setTag( new ViewHolder(v) );
         return v;
     }
 
+    // Define bindings of data to view components
     @Override
     public void bindView(View v, Context ctx, Cursor c) {
         ViewHolder vh = (ViewHolder) v.getTag();
@@ -72,10 +73,9 @@ public class WorkoutCursorAdapter extends SimpleCursorAdapter {
 
         if(c.getInt(favIndex)==1) vh.favButton.setImageResource(R.mipmap.heart_on_icon);
         else vh.favButton.setImageResource(R.mipmap.heart_off_icon);
-
-        //vh.imageView.setImageBitmap ( mySetImage ( sFileAndPath_Image ) );
     }
 
+    // Convert raw seconds int to hh:mm:ss format string
     private String secToDuration(int sec){
         int hours = sec/3600;
         int mins = (sec-hours*3600)/60;

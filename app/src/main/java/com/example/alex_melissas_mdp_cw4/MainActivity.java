@@ -34,24 +34,22 @@ import java.text.ParseException;
 public class MainActivity extends AppCompatActivity {
 
     private MyLocationService.MyLocationBinder myLocationBinder = null;
-    private String musicFolderPath;
-    private Handler progressBarHandler;
-    private boolean checkProgress;
-
     protected DBHelper dbHelper;
     protected SQLiteDatabase db;
     protected SimpleCursorAdapter adapter;
 
 ///////////////////////////////// P E R M I S S I O N S /////////////////////////////////////////////////////////
+    // Check for external storage read access and location access
     public static void checkPermissions(Activity activity) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)//NOT ROBUST
                 != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions( activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                  Manifest.permission.ACCESS_FINE_LOCATION}, 1);
     }
 ///////////////////////////////////// G E N E R A L /////////////////////////////////////////////////////////////
+
+    // Standard onCreate, start and bind the service, create DB, permissions and layout settings.
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +65,13 @@ public class MainActivity extends AppCompatActivity {
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),
                 serviceConnection, BIND_AUTO_CREATE);
-
-        setButtonVisibility(false);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onResume()
     {
-        readRecent(); //idk - maybe not insert.. idk
-        //test if workout active then update visiblebuttons
+        readRecent();
         super.onResume();
     }
 
@@ -110,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // Change MainActivity layout according to if there's an active workout
     private void setButtonVisibility(boolean workoutActive){
 
         ImageView animationImage = (ImageView)findViewById(R.id.animationImage);
@@ -144,26 +140,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 /////////////////////////// C A L L B A C K  H A N D L I N G ////////////////////////////////////////////////////
+    // Callback to know if there is a workout in progress
     MyLocationCallback callback = new MyLocationCallback() {
         @Override
         public void checkWorkout() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(myLocationBinder.getState()){
-                        checkProgress = true;
-                        initiateProgressUpdating();
-                        setButtonVisibility(true);
-                    }
-                    else {
-                        setButtonVisibility(false);
-                    }
+                    if(myLocationBinder.getState())setButtonVisibility(true);
+                    else setButtonVisibility(false);
                 }
             });
         }
     };
-
 /////////////////////////////////// B U T T O N    H A N D L E R S //////////////////////////////////////////////
+
+    // Standard onClick stuff
+
     public void onClickWalk(View v) throws ParseException { myLocationBinder.startWorkout(0);}
     public void onClickJog(View v) throws ParseException { myLocationBinder.startWorkout(1);}
     public void onClickRun(View v) throws ParseException { myLocationBinder.startWorkout(2);}
@@ -176,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
+
+    // Query the 2 most recent workouts
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readRecent() {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
@@ -200,21 +195,6 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putString("workout_id", workout_id);
                 intent.putExtras(bundle);
                 startActivity(intent);
-            }
-        });
-    }
-
-/////////////////////////////////// S E R V I C E   S T U F F ///////////////////////////////////////
-
-    // Track song progress, displayed in progress bar as percentage and shown in m:ss format
-    public void initiateProgressUpdating(){
-        progressBarHandler = new Handler();
-        progressBarHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(checkProgress) {
-                    //
-                }
             }
         });
     }

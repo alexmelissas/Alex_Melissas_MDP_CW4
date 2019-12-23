@@ -24,6 +24,7 @@ public class History extends AppCompatActivity {
     private String typeFilter;
     private String sortBy;
 
+    //Standard onCreate, also reset selection radios
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class History extends AppCompatActivity {
         super.onResume();
     }
 
+    // Read all necessary data from WORKOUTS table, populate the ListView
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void readWorkouts(String selection, String[] selectionArgs) {
 
@@ -91,6 +93,7 @@ public class History extends AppCompatActivity {
 //        }
 //    }
 
+    //Shape the query selection and arguments according to selected time/workout type filters
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void querySelections() {
 
@@ -116,14 +119,15 @@ public class History extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTimeFilter(View v) { setTimeFilter(v); querySelections(); }
+    public void onClickTimeFilter(View v) { setTimeFilter(v); querySelections(); }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
+    public void onClickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickListSort(View v) { setListSort(v); querySelections(); }
+    public void onClickListSort(View v) { setListSort(v); querySelections(); }
 
+    // Set time filter based on selected radio
     private void setTimeFilter(View v){
         switch(v.getId()){
             case R.id.todayRadio: timeFilter = "today"; break;
@@ -134,6 +138,7 @@ public class History extends AppCompatActivity {
         }
     }
 
+    // Set workout type filter based on selected radio
     private void setTypeFilter(View v){
         switch(v.getId()){
             case R.id.allTypeRadio: typeFilter = "-1"; break;
@@ -143,6 +148,7 @@ public class History extends AppCompatActivity {
         }
     }
 
+    // Shape the sorting of the query
     private void setListSort(View v){
         ((TextView)findViewById(R.id.typeSort)).setTypeface(null, Typeface.NORMAL);
         ((TextView)findViewById(R.id.dateTimeSort)).setTypeface(null, Typeface.NORMAL);
@@ -169,7 +175,7 @@ public class History extends AppCompatActivity {
         }
     }
 
-    //make the time selection part
+    // Shape the arguments of time selection
     private String pickTime(){
         String selection = "";
         switch(timeFilter){
@@ -182,7 +188,7 @@ public class History extends AppCompatActivity {
         return selection;
     }
 
-    //split date for
+    // Date formatting
     private String formatDate() {
         SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String currentReverseDate = yyyyMMdd.format(new Date());
@@ -198,6 +204,7 @@ public class History extends AppCompatActivity {
         return date;
     }
 
+    // Get the current week-of-year
     private int getCurrentWeek(){
             Cursor c = getContentResolver().query(WorkoutsContract.GETCURRRENTWEEK,
                     null,null,null,null);

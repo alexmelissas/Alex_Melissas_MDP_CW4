@@ -9,6 +9,7 @@ import android.util.Log;
 
 public class MyLocationListener implements LocationListener {
 
+    //Passed in from the service, for BR
     private Context context;
 
     public MyLocationListener(Context c){
@@ -16,6 +17,7 @@ public class MyLocationListener implements LocationListener {
         context = c;
     }
 
+    // Create new Broadcast with the new location in it
     @Override
     public void onLocationChanged(Location location) {
         Intent intent = new Intent(context, MyLocationReceiver.class);
@@ -25,18 +27,18 @@ public class MyLocationListener implements LocationListener {
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) { // information about the signal, i.e. number of satellites
-        Log.d("g53mdp", "onStatusChanged: " + provider + " " + status);
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d("LocationListener", "onStatusChanged: " + provider + " " + status);
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-// the user enabled (for example) the GPS Log.d("g53mdp", "onProviderEnabled: " + provider);
+        Log.d("LocationListener", "onProviderEnabled: " + provider);
     }
 
     @Override
     public void onProviderDisabled(String provider) {
-// the user disabled (for example) the GPS Log.d("g53mdp", "onProviderDisabled: " + provider);
+        Log.d("LocationListener", "onProviderDisabled: " + provider);
     }
 
 

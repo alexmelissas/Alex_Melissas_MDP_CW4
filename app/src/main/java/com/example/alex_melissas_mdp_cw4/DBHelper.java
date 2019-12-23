@@ -10,6 +10,7 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, "fitnessDB", null, 1);
     }
 
+    // Create tables needed
     public void onCreate(SQLiteDatabase db){
         db.execSQL(
                 "CREATE TABLE workouts ("

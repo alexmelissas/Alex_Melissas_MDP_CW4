@@ -7,8 +7,8 @@ import android.util.Log;
 public class MyLocationTracker {
 
     public Location currentLocation;
-    protected float currentDuration;//SEC
-    protected float currentDistance;//METERS?
+    protected float currentDuration;
+    protected float currentDistance;
     protected long currentTime;
     private static MyLocationTracker singleton;
 
@@ -27,9 +27,8 @@ public class MyLocationTracker {
         else return singleton;
     }
 
+    // Update current location to new one, update workout distance and duration
     public void updateLocation(Location location){
-        Log.d("New location: ",location.getLatitude()+", "+location.getLongitude());
-
         if(currentLocation!=null) currentDistance += currentLocation.distanceTo(location);
         currentLocation = location;
 
@@ -40,12 +39,14 @@ public class MyLocationTracker {
         Log.d("MyLocationTracker: ", "\nDISTANCE: " + currentDistance/1000 + ", DURATION: "+currentDuration/1000);
     }
 
+    // Reset - when starting new workout
     public void reset(){
         currentDuration=0;
         currentDistance=0;
         currentTime = System.currentTimeMillis();
     }
 
+    //Standard getters
     public Location getLocation(){return currentLocation;};
     public double[] getLocationCoords(){ return new double[]{currentLocation.getLongitude(),currentLocation.getLatitude()}; }
     public float getDistance(){ return currentDistance/1000;}

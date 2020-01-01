@@ -135,9 +135,9 @@ public class MyLocationService extends Service {
 
         // 1. Insert new workout, bare-bones for now, just starting date/time & type.
 
-            SimpleDateFormat ddMMyyhhmmss = new SimpleDateFormat("dd/MM/yy | HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat ddMMyyhhmmss = new SimpleDateFormat("dd/MM/yy | HH:mm:ss",
+                    Locale.getDefault());
             String currentDateTime = ddMMyyhhmmss.format(new Date());
-            //String currentDateTime = ddMMyyhhmmss.format(new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime());
 
             Date ymd = ddMMyyhhmmss.parse(currentDateTime);
             SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
@@ -156,7 +156,8 @@ public class MyLocationService extends Service {
             long newWorkoutId = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTS, workoutValues));
             workout_id = "" + newWorkoutId;
 
-        // 2. Insert new WorkoutsWithLocations entry (location as start point of workout), and Location (insert only if new location).
+        // 2. Insert new WorkoutsWithLocations entry (location as start point of workout),
+            // and Location (insert only if new location).
 
             MyLocationTracker.requestLocationTracker().reset();
             return insertWorkoutWithLocationEntry(true);

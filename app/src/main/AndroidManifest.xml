@@ -19,10 +19,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDa0rrSm9eQyhvOvCozKKvAX8hxSRhBCTc"/>
+        <activity android:name=".MapsActivity"></activity>
+
         <receiver
             android:name=".MyLocationReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <activity android:name=".Totals" />
         <activity android:name=".History" />

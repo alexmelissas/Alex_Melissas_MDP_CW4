@@ -69,7 +69,7 @@ public class SingleWorkout extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(SingleWorkout.this, "Image selection error", Toast.LENGTH_SHORT).show();
             }
-        }else Toast.makeText(SingleWorkout.this, "No image selected",Toast.LENGTH_LONG).show();
+        }else Toast.makeText(SingleWorkout.this, "No image selected",Toast.LENGTH_SHORT).show();
     }
 
     //Attach listeners to textfields, to automatically save changes to db onTextChange

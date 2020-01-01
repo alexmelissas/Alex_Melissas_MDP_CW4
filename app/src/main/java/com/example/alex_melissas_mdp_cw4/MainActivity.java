@@ -3,6 +3,7 @@ package com.example.alex_melissas_mdp_cw4;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -28,6 +29,13 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.ParseException;
 
@@ -167,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
     public void onClickHistory(View v){startActivity(new Intent(MainActivity.this, History.class));}
 
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
+
+    //TEST
+    public void onClickTest(View v){startActivity(new Intent(MainActivity.this, MapsActivity.class));}
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
 

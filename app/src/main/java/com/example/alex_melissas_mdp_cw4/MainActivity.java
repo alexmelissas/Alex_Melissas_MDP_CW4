@@ -3,7 +3,6 @@ package com.example.alex_melissas_mdp_cw4;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -14,28 +13,17 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimationDrawable;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.ParseException;
 
@@ -130,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
             findViewById(R.id.stopButton).setVisibility(View.VISIBLE);
             findViewById(R.id.animationImage).setVisibility(View.VISIBLE);
+            findViewById(R.id.testButton).setVisibility(View.VISIBLE);
             workoutAnimation.start();
         }
         else{
@@ -143,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
             findViewById(R.id.stopButton).setVisibility(View.GONE);
             findViewById(R.id.animationImage).setVisibility(View.GONE);
+            findViewById(R.id.testButton).setVisibility(View.GONE);
             workoutAnimation.stop();
         }
     }
@@ -177,7 +167,15 @@ public class MainActivity extends AppCompatActivity {
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
 
     //TEST
-    public void onClickTest(View v){startActivity(new Intent(MainActivity.this, MapsActivity.class));}
+    public void onClickTest(View v){
+        double[] currentCoords = MyLocationTracker.requestLocationTracker().getCurrentCoords();
+        LatLng currentLocation = new LatLng(currentCoords[0],currentCoords[1]);
+        Intent mapIntent = new Intent(MainActivity.this, MapsActivity.class);
+        mapIntent.putExtra("pin1", currentLocation);
+        mapIntent.putExtra("currentOrPast", 0);
+        mapIntent.putExtra("whoCalled", "MainActivity");
+        startActivity(mapIntent);
+    }
 
 /////////////////////////////////// D A T A B A S E    S T U F F ////////////////////////////////////////////////
 

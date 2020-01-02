@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
-import android.widget.Switch;
 import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import java.text.ParseException;
@@ -160,7 +159,7 @@ public class MyLocationService extends Service {
             // and Location (insert only if new location).
 
             MyLocationTracker.requestLocationTracker().reset();
-            return insertWorkoutWithLocationEntry(true);
+            return insertWorkoutWithLocationEntry(0);
         }
 
         // When user stops workout - get all workout data from MyLocationTracker, store all data in relevant table in db
@@ -176,17 +175,17 @@ public class MyLocationService extends Service {
             getContentResolver().update(WorkoutsContract.WORKOUTS,finishedWorkout,"_id=?",new String[]{workout_id});
 
             // Insert new location as end point of workout
-            insertWorkoutWithLocationEntry(false);
+            insertWorkoutWithLocationEntry(1);
             workoutActive = false;
             doCallBackCheckWorkout();
         }
 
         // Insert new entry to WorkoutsWithLocations table, with Workout id and location id, and
         // boolean if location was start or end point of workout. Also start notification process.
-        private long insertWorkoutWithLocationEntry(boolean startStopPoint){
+        private long insertWorkoutWithLocationEntry(int startStopPoint){
 
-            double lon = MyLocationTracker.requestLocationTracker().getLocationCoords()[0];
-            double lat = MyLocationTracker.requestLocationTracker().getLocationCoords()[1];
+            double lat = MyLocationTracker.requestLocationTracker().getCurrentCoords()[0];
+            double lon = MyLocationTracker.requestLocationTracker().getCurrentCoords()[1];
 
             //Check if this Location already exists
             Cursor c = getContentResolver().query(WorkoutsContract.LOCATIONS,
@@ -198,20 +197,17 @@ public class MyLocationService extends Service {
             // If exists, just create new entry in WorkoutsWithLocations table
             if (c.moveToFirst()) {
                 String location_id = "" + c.getInt(0);
-                Log.d("Location EXISTS: ", location_id);
                 ContentValues workoutsWithLocationsValues = new ContentValues();
                 workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, workout_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, location_id);
-                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, 0);
+                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, startStopPoint);
                 workoutActive = true;
                 doCallBackCheckWorkout();
+                Log.d("Inserting: ","workout id= "+workout_id+", startStop= "+startStopPoint);
                 returnID = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
 
                 // If not exists, create new entry for it in Locations and then new entry for wID, lID in WwL table
             } else {
-
-                Log.d("Location: ", "NOT EXIST");
-
                 ContentValues locationValues = new ContentValues();
                 locationValues.put(WorkoutsContract.LON, lon);
                 locationValues.put(WorkoutsContract.LAT, lat);
@@ -221,15 +217,15 @@ public class MyLocationService extends Service {
                 ContentValues workoutsWithLocationsValues = new ContentValues();
                 workoutsWithLocationsValues.put(WorkoutsContract.WORKOUT_ID, workout_id);
                 workoutsWithLocationsValues.put(WorkoutsContract.LOCATION_ID, newLocationIdString);
-                int startStop = (startStopPoint==true) ? 0 : 1;
-                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, startStop);
+                workoutsWithLocationsValues.put(WorkoutsContract.STARTSTOPPOINT, startStopPoint);
                 workoutActive = true;
                 doCallBackCheckWorkout();
+                Log.d("Inserting: ","workout id= "+workout_id+", startStop= "+startStopPoint);
                 returnID = ContentUris.parseId(getContentResolver().insert(WorkoutsContract.WORKOUTSWITHLOCATIONS, workoutsWithLocationsValues));
             }
 
         // If starting workout, send first notification and initiate the updating of notifications
-            if(startStopPoint) notification(true);
+            if(startStopPoint==0) notification(true);
 
             return returnID;
         }

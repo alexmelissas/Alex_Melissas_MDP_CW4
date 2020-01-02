@@ -10,11 +10,15 @@ import android.util.Log;
 public class MyLocationReceiver extends BroadcastReceiver {
 
     @Override
-    // Send the new Location to the LocationTracker class, to measure stats
+    //Handle receiving new location from LocationListener
     public void onReceive(Context context, Intent intent) {
         Bundle data = intent.getExtras();
         Location location = (Location) data.getParcelable("location");
+
+        //Send it to LocationTracker (Singleton) for measuring stats
         MyLocationTracker.requestLocationTracker().updateLocation(location);
+
+        //Send it to MapActivity for showing live current location?
     }
 
 }

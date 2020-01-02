@@ -25,7 +25,7 @@
         android:layout_marginEnd="63dp"
         android:layout_marginRight="63dp"
         android:layout_marginBottom="36dp"
-        android:onClick="onClickTest"
+        android:onClick="onClickReturn"
         android:text="STOP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

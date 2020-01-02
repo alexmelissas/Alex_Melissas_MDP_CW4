@@ -21,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ public class SingleWorkout extends AppCompatActivity {
 
     final static public int RESULT_LOAD_IMG = 1;
     private String workout_id;
+    private LatLng startLocation, endLocation;
 
     //Standard onCreate, also read the workout data and attach listeners to textfields
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -108,43 +111,57 @@ public class SingleWorkout extends AppCompatActivity {
         Cursor c = getContentResolver().query(WorkoutsContract.WORKOUTS, new String[]{ "*"},
                 "_id = ?",new String[]{workout_id}, null, null);
 
-        if(c.moveToFirst()){
+        if(c.moveToFirst()) {
 
             int type = c.getInt(1);
             int liked = c.getInt(8);
             int fav = c.getInt(9);
 
             // TYPE-ICON
-            switch(type){
-                case 0: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon); break;
-                case 1: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.jog_icon); break;
-                case 2: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.run_icon); break;
-                default: ((ImageView)findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon); break;
+            switch (type) {
+                case 0:
+                    ((ImageView) findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon);
+                    break;
+                case 1:
+                    ((ImageView) findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.jog_icon);
+                    break;
+                case 2:
+                    ((ImageView) findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.run_icon);
+                    break;
+                default:
+                    ((ImageView) findViewById(R.id.typeImageSingle)).setImageResource(R.mipmap.walk_icon);
+                    break;
             }
 
             String name = c.getString(2);
-            if(name!="" && name!=null) ((EditText)findViewById(R.id.nameText)).setText(name);
-            else ((EditText)findViewById(R.id.nameText)).setText("Name this workout");
+            if (name != "" && name != null) ((EditText) findViewById(R.id.nameText)).setText(name);
+            else ((EditText) findViewById(R.id.nameText)).setText("Name this workout");
 
-            if(liked==0) { ((CheckBox)findViewById(R.id.likeCheck)).setChecked(false); }
-            else { ((CheckBox)findViewById(R.id.likeCheck)).setChecked(true); }
+            if (liked == 0) {
+                ((CheckBox) findViewById(R.id.likeCheck)).setChecked(false);
+            } else {
+                ((CheckBox) findViewById(R.id.likeCheck)).setChecked(true);
+            }
 
-            if(fav==0) { ((CheckBox)findViewById(R.id.favCheck)).setChecked(false); }
-            else { ((CheckBox)findViewById(R.id.favCheck)).setChecked(true); }
+            if (fav == 0) {
+                ((CheckBox) findViewById(R.id.favCheck)).setChecked(false);
+            } else {
+                ((CheckBox) findViewById(R.id.favCheck)).setChecked(true);
+            }
 
-            ((TextView)findViewById(R.id.datetimeText)).setText(c.getString(3).substring(0,16));
-            ((TextView)findViewById(R.id.durationText)).setText(secToDuration(c.getInt(4)));
-            ((TextView)findViewById(R.id.distanceText)).setText(String.format("%.2f",c.getFloat(5))+" km");
-            ((TextView)findViewById(R.id.avgspeedText)).setText(String.format("%.2f",c.getFloat(6))+" km/h");
-            ((EditText)findViewById(R.id.notesText)).setText(c.getString(10));
+            ((TextView) findViewById(R.id.datetimeText)).setText(c.getString(3).substring(0, 16));
+            ((TextView) findViewById(R.id.durationText)).setText(secToDuration(c.getInt(4)));
+            ((TextView) findViewById(R.id.distanceText)).setText(String.format("%.2f", c.getFloat(5)) + " km");
+            ((TextView) findViewById(R.id.avgspeedText)).setText(String.format("%.2f", c.getFloat(6)) + " km/h");
+            ((EditText) findViewById(R.id.notesText)).setText(c.getString(10));
 
             // IMAGE
 
-            if(c.getBlob(7)==null) return;
+            if (c.getBlob(7) == null) return;
 
             ByteArrayInputStream imageStream = new ByteArrayInputStream(c.getBlob(7));
-            Bitmap imageBM= BitmapFactory.decodeStream(imageStream);
-            ((ImageView)findViewById(R.id.imagePickButton)).setImageBitmap(imageBM);
+            Bitmap imageBM = BitmapFactory.decodeStream(imageStream);
+            ((ImageView) findViewById(R.id.imagePickButton)).setImageBitmap(imageBM);
         }
     }
 
@@ -190,6 +207,31 @@ public class SingleWorkout extends AppCompatActivity {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+    }
+
+    // Prompt user to pick image from files
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void onClickMap(View v){
+
+        // LOCATIONS
+        Cursor l = getContentResolver().query(WorkoutsContract.LOCATIONSOFWORKOUT, null,
+                null,new String[]{workout_id}, null, null);
+
+        if(l.moveToFirst()) {
+            do{ //if start location make these LatLng the start location
+                if(l.getInt(2)==0) startLocation = new LatLng(l.getDouble(0),l.getDouble(1));
+                else endLocation = new LatLng(l.getDouble(0),l.getDouble(1));
+            }while(l.moveToNext());
+        } else startLocation = endLocation = null;
+
+        if(startLocation == null || endLocation == null) return;
+
+        Intent mapIntent = new Intent(SingleWorkout.this, MapsActivity.class);
+        mapIntent.putExtra("pin1", startLocation);
+        mapIntent.putExtra("pin2", endLocation);
+        mapIntent.putExtra("currentOrPast", 1);
+        mapIntent.putExtra("whoCalled", "SingleWorkout");
+        startActivity(mapIntent);
     }
 
 }

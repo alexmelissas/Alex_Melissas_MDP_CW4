@@ -53,7 +53,7 @@ public class MyLocationTracker {
 
     //Standard getters
     public Location getLocation(){return currentLocation;};
-    public double[] getLocationCoords(){ return new double[]{currentLocation.getLongitude(),currentLocation.getLatitude()}; }
+    public double[] getCurrentCoords(){ return new double[]{currentLocation.getLatitude(),currentLocation.getLongitude()}; }
     public float getDistance(){ return currentDistance/1000;}
     public float getDuration(){ return currentDuration/1000;}
 

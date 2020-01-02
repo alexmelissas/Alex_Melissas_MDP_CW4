@@ -28,6 +28,7 @@ public class WorkoutsProvider extends ContentProvider {
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "workoutswithlocations", 3);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "recents", 4);
         uriMatcher.addURI(WorkoutsContract.AUTHORITY, "getcurrentweek", 5);
+        uriMatcher.addURI(WorkoutsContract.AUTHORITY, "locationsofworkout", 6);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class WorkoutsProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        //Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
+        Log.d("QUERY: ",getTableFromUri(uri) + " | " + selection  + " | " + sortOrder);
 
         switch(uriMatcher.match(uri)) {
             case 1: return db.query("workouts", projection, selection, selectionArgs, null, null, sortOrder);
@@ -66,6 +67,11 @@ public class WorkoutsProvider extends ContentProvider {
             case 3: return db.query("workoutswithlocations", projection, selection, selectionArgs, null, null, sortOrder);
             case 4: return db.rawQuery("SELECT * FROM workouts ORDER BY yyyymmdd DESC, hhmmss DESC LIMIT 2",selectionArgs);
             case 5: return db.rawQuery("SELECT strftime('%W', 'now', 'localtime', 'weekday 0', '-6 days') FROM workouts;",null);
+            case 6: return db.rawQuery("select l.lat, l.lon, wl.startStopPoint, wl.workout_id "+
+                            "from workouts w "+
+                            "join workoutswithlocations wl on (w._id = wl.workout_id) "+
+                            "join locations l on (wl.location_id = l._id) where w._id == ?",
+                    selectionArgs);
             default: return null;
         }
     }

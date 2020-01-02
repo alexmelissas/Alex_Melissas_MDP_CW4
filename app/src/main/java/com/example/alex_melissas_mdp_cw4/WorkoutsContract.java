@@ -11,6 +11,7 @@ public class WorkoutsContract {
     public static final Uri WORKOUTSWITHLOCATIONS = Uri.parse("content://"+AUTHORITY+"/workoutswithlocations");
     public static final Uri RECENTS = Uri.parse("content://"+AUTHORITY+"/recents");
     public static final Uri GETCURRRENTWEEK = Uri.parse("content://"+AUTHORITY+"/getcurrentweek");
+    public static final Uri LOCATIONSOFWORKOUT = Uri.parse("content://"+AUTHORITY+"/locationsofworkout");
 
     public static final String _ID = "_id";
     public static final String TYPE = "type"; // 0=Walk, 1=Jog, 2=Run

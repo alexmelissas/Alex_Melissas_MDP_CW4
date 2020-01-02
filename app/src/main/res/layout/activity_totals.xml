@@ -6,17 +6,60 @@
     android:layout_height="match_parent"
     tools:context=".Totals">
 
+    <ImageView
+        android:id="@+id/background1"
+        android:layout_width="378dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/typeGroupT"
+        app:srcCompat="@color/common_google_signin_btn_text_light_disabled" />
+
+    <ImageView
+        android:id="@+id/background2"
+        android:layout_width="378dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/background1"
+        app:srcCompat="@color/common_google_signin_btn_text_light_disabled" />
+
+    <ImageView
+        android:id="@+id/background3"
+        android:layout_width="378dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/background2"
+        app:srcCompat="@color/common_google_signin_btn_text_light_disabled" />
+
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
         android:layout_marginLeft="52dp"
-        android:layout_marginTop="69dp"
+        android:layout_marginTop="20dp"
         android:text="Distance Covered:"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toTopOf="@+id/background2" />
 
     <TextView
         android:id="@+id/textView8"
@@ -24,53 +67,54 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
         android:layout_marginLeft="52dp"
-        android:layout_marginTop="69dp"
+        android:layout_marginTop="20dp"
         android:text="Average Speed:"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toTopOf="@+id/background3" />
 
     <TextView
         android:id="@+id/speedTotalText"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginRight="44dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:text="4.68km/h"
         android:textColor="#04630E"
         android:textSize="20dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distanceTotalText" />
+        app:layout_constraintEnd_toEndOf="@+id/background3"
+        app:layout_constraintTop_toTopOf="@+id/background3" />
 
     <TextView
         android:id="@+id/durationTotalText"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="94dp"
-        android:layout_marginRight="94dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:textColor="#BE0011"
         android:textSize="20dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/typeGroupT"
+        app:layout_constraintEnd_toEndOf="@+id/background1"
+        app:layout_constraintTop_toTopOf="@+id/background1"
         tools:text="3:03:04" />
 
     <TextView
         android:id="@+id/distanceTotalText"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
-        android:layout_marginTop="42dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginRight="64dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:text="165.30km"
         android:textColor="#195ACF"
         android:textSize="20dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/durationTotalText" />
+        app:layout_constraintEnd_toEndOf="@+id/background2"
+        app:layout_constraintTop_toTopOf="@+id/background2" />
 
     <RadioGroup
         android:id="@+id/timeGroupT"
@@ -175,10 +219,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
         android:layout_marginLeft="52dp"
-        android:layout_marginTop="124dp"
+        android:layout_marginTop="20dp"
         android:text="Workout Time:"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/typeGroupT" />
+        app:layout_constraintTop_toTopOf="@+id/background1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

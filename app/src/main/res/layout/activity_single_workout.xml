@@ -10,8 +10,8 @@
         android:id="@+id/imagePickButton"
         android:layout_width="180dp"
         android:layout_height="180dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginLeft="25dp"
         android:layout_marginTop="32dp"
         android:adjustViewBounds="false"
         android:clickable="true"
@@ -176,17 +176,17 @@
         app:layout_constraintStart_toEndOf="@+id/durationText"
         app:layout_constraintTop_toBottomOf="@+id/nameText" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/mapButton"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
-        android:layout_marginStart="55dp"
-        android:layout_marginLeft="55dp"
-        android:layout_marginTop="71dp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginRight="25dp"
         android:onClick="onClickMap"
-        app:layout_constraintStart_toEndOf="@+id/imagePickButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:srcCompat="@mipmap/map_icon" />
+        app:srcCompat="@mipmap/map_yellow" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

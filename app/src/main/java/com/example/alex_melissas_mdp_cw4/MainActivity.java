@@ -3,10 +3,12 @@ package com.example.alex_melissas_mdp_cw4;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -22,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -36,12 +39,22 @@ public class MainActivity extends AppCompatActivity {
 
 ///////////////////////////////// P E R M I S S I O N S /////////////////////////////////////////////////////////
     // Check for external storage read access and location access
-    public static void checkPermissions(Activity activity) {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)//NOT ROBUST
-                != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions( activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                                 Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        // Location for obvious reasons
+        // Read external storage for images
+    public static boolean checkPermissions(Context context, String[] permissions) {
+        if (context != null && permissions != null)
+            for (String permission : permissions)
+                if (ActivityCompat.checkSelfPermission(context, permission)
+                        != PackageManager.PERMISSION_GRANTED) return false;
+        return true;
+    }
+
+    public void requestPermissions() {
+        if(!checkPermissions(this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION}))
+            ActivityCompat.requestPermissions(this,
+                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
     }
 ///////////////////////////////////// G E N E R A L /////////////////////////////////////////////////////////////
 
@@ -56,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
-        checkPermissions(this);
+        requestPermissions();
 
         this.startService(new Intent(this, MyLocationService.class));
         this.bindService(new Intent(this, MyLocationService.class),
@@ -67,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume()
     {
+        requestPermissions();
         readRecent();
         super.onResume();
     }
@@ -118,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
             findViewById(R.id.stopButton).setVisibility(View.VISIBLE);
             findViewById(R.id.animationImage).setVisibility(View.VISIBLE);
-            findViewById(R.id.testButton).setVisibility(View.VISIBLE);
+            findViewById(R.id.mapButton).setVisibility(View.VISIBLE);
             workoutAnimation.start();
         }
         else{
@@ -132,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
             findViewById(R.id.stopButton).setVisibility(View.GONE);
             findViewById(R.id.animationImage).setVisibility(View.GONE);
-            findViewById(R.id.testButton).setVisibility(View.GONE);
+            findViewById(R.id.mapButton).setVisibility(View.GONE);
             workoutAnimation.stop();
         }
     }
@@ -167,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
 
     //TEST
-    public void onClickTest(View v){
+    public void onClickMap(View v){
         double[] currentCoords = MyLocationTracker.requestLocationTracker().getCurrentCoords();
         LatLng currentLocation = new LatLng(currentCoords[0],currentCoords[1]);
         Intent mapIntent = new Intent(MainActivity.this, MapsActivity.class);
@@ -184,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private void readRecent() {
         final ListView recentList = (ListView) findViewById(R.id.recentList);
         Cursor c = getContentResolver().query(WorkoutsContract.RECENTS,null,
-                null, null, "datetime DESC", null);
+                null, null, "yyyymmdd DESC, hhmmss DESC", null);
 
         String[] columns = new String[]{"dateTime", "duration", "distance", "type", "fav"};
         int[] to = new int[]{R.id.datetimeBox, R.id.durationBox, R.id.distanceBox};

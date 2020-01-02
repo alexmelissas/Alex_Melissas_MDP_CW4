@@ -8,9 +8,11 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -37,15 +39,85 @@ public class History extends AppCompatActivity {
         querySelections();
     }
 
-    //maybe savestate shit for current projection/selection/args etc?
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("timeFilter", timeFilter);
+        outState.putString("typeFilter", typeFilter);
+        outState.putString("sortBy", sortBy);
+    }
 
+    // Restore the filters
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    protected void onResume() {
-        setTypeFilter(findViewById(R.id.allTypeRadio));
-        setTimeFilter(findViewById(R.id.todayRadio));
-        setListSort(findViewById(R.id.dateTimeSort));
+    @Override
+    protected void onRestoreInstanceState(Bundle inState) {
+        super.onRestoreInstanceState(inState);
+
+        timeFilter = inState.getString("timeFilter");
+        typeFilter = inState.getString("typeFilter");
+        sortBy = inState.getString("sortBy");
+
+        View timeView = ((RadioButton)findViewById(R.id.todayRadio));
+        View  typeView = ((RadioButton)findViewById(R.id.allTypeRadio));
+        View sortView = (TextView)findViewById(R.id.dateTimeSort);
+
+        ((RadioButton)findViewById(R.id.todayRadio)).setChecked(true);
+        ((RadioButton)findViewById(R.id.allTypeRadio)).setChecked(true);
+
+        switch(timeFilter){
+            case "today":
+                ((RadioButton)findViewById(R.id.todayRadio)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.todayRadio));
+                break;
+            case "week":
+                ((RadioButton)findViewById(R.id.weekRadio)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.weekRadio));
+                break;
+            case "month":
+                ((RadioButton)findViewById(R.id.monthRadio)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.monthRadio));
+                break;
+            case "year":
+                ((RadioButton)findViewById(R.id.yearRadio)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.yearRadio));
+                break;
+            case "alltime":
+                ((RadioButton)findViewById(R.id.allTimeRadio)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.allTimeRadio));
+                break;
+        }
+
+        switch(typeFilter){
+            case "-1":
+                ((RadioButton)findViewById(R.id.allTypeRadio)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.allTypeRadio));
+                break;
+            case "0":
+                ((RadioButton)findViewById(R.id.walkRadio)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.walkRadio));
+                break;
+            case "1":
+                ((RadioButton)findViewById(R.id.jogRadio)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.jogRadio));
+                break;
+            case "2":
+                ((RadioButton)findViewById(R.id.runRadio)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.runRadio));
+                break;
+        }
+
+        switch(sortBy){
+            case "type DESC": sortView = (TextView)findViewById(R.id.typeSort); break;
+            case "yyyymmdd DESC, hhmmss DESC": sortView = (TextView)findViewById(R.id.dateTimeSort); break;
+            case "duration DESC": sortView = (TextView)findViewById(R.id.durationSort); break;
+            case "distance DESC": sortView = (TextView)findViewById(R.id.distanceSort); break;
+            case "fav DESC": sortView = (TextView)findViewById(R.id.favSort); break;
+        }
+
+        onClickTimeFilter(timeView);
+        onClickTypeFilter(typeView);
+        onClickListSort(sortView);
         querySelections();
-        super.onResume();
     }
 
     // Read all necessary data from WORKOUTS table, populate the ListView
@@ -79,19 +151,6 @@ public class History extends AppCompatActivity {
             }
         });
     }
-
-    // PUT WITH SAVESTATE SHIT
-
-//    private void updateFromRadios(){
-//
-//        switch(timeFilter){
-//            case "today": ((RadioButton)findViewById(R.id.todayRadio)).setChecked(true); break;
-//            case "week": ((RadioButton)findViewById(R.id.weekRadio)).setChecked(true); break;
-//            case "month": ((RadioButton)findViewById(R.id.monthRadio)).setChecked(true); break;
-//            case "year": ((RadioButton)findViewById(R.id.yearRadio)).setChecked(true); break;
-//            case "alltime": ((RadioButton)findViewById(R.id.allTimeRadio)).setChecked(true); break;
-//        }
-//    }
 
     //Shape the query selection and arguments according to selected time/workout type filters
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

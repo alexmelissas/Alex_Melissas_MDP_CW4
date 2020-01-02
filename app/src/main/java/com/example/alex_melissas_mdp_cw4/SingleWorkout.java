@@ -48,6 +48,24 @@ public class SingleWorkout extends AppCompatActivity {
         attachListeners();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("workout_id", workout_id);
+        outState.putParcelable("startLocation", startLocation);
+        outState.putParcelable("endLocation", endLocation);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onRestoreInstanceState(Bundle inState) {
+        super.onRestoreInstanceState(inState);
+        workout_id = inState.getString("workout_id");
+        startLocation = inState.getParcelable("startLocation");
+        endLocation = inState.getParcelable("endLocation");
+        readWorkout();
+    }
+
     // Handle storing/loading image to/from db, and displaying it in the imageView
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
@@ -209,14 +227,11 @@ public class SingleWorkout extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
     }
 
-    // Prompt user to pick image from files
+    // Show map with start and end points of workout
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onClickMap(View v){
-
-        // LOCATIONS
         Cursor l = getContentResolver().query(WorkoutsContract.LOCATIONSOFWORKOUT, null,
                 null,new String[]{workout_id}, null, null);
-
         if(l.moveToFirst()) {
             do{ //if start location make these LatLng the start location
                 if(l.getInt(2)==0) startLocation = new LatLng(l.getDouble(0),l.getDouble(1));
@@ -231,6 +246,7 @@ public class SingleWorkout extends AppCompatActivity {
         mapIntent.putExtra("pin2", endLocation);
         mapIntent.putExtra("currentOrPast", 1);
         mapIntent.putExtra("whoCalled", "SingleWorkout");
+        mapIntent.putExtra("workout_id", workout_id);
         startActivity(mapIntent);
     }
 

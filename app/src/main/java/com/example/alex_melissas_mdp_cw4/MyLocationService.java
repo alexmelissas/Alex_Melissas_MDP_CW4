@@ -124,8 +124,9 @@ public class MyLocationService extends Service {
             // Error handling - if GPS signal has issues or havent received updates before this method
             // is called then warn user and exit
             if(MyLocationTracker.requestLocationTracker().getLocation() == null) {
-                Toast.makeText(getApplicationContext(), "GPS wasn't ready. Please try again.",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "GPS wasn't ready. Please try again." +
+                                " If you just allowed the GPS permission, please try relaunching the app.",
+                        Toast.LENGTH_LONG).show();
                 return -1;
             }
             workoutType = type;
@@ -142,8 +143,8 @@ public class MyLocationService extends Service {
             SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
             String currentReverseDate = yyyyMMdd.format(ymd);
 
-            SimpleDateFormat hhmmss = new SimpleDateFormat("hh:mm:ss",Locale.getDefault());
-            String currentTime = hhmmss.format(ymd);
+            SimpleDateFormat HHmmss = new SimpleDateFormat("HH:mm:ss",Locale.getDefault());
+            String currentTime = HHmmss.format(ymd);
 
             Log.d("dates: ",currentDateTime+", "+currentReverseDate+", "+currentTime);
 

@@ -17,8 +17,6 @@ public class MyLocationReceiver extends BroadcastReceiver {
 
         //Send it to LocationTracker (Singleton) for measuring stats
         MyLocationTracker.requestLocationTracker().updateLocation(location);
-
-        //Send it to MapActivity for showing live current location?
     }
 
 }

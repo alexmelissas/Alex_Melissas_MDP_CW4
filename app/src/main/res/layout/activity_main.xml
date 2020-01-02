@@ -9,12 +9,14 @@
 
     <ImageView
         android:id="@+id/animationImage"
-        android:layout_width="279dp"
-        android:layout_height="266dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginLeft="64dp"
-        android:layout_marginTop="38dp"
+        android:layout_width="166dp"
+        android:layout_height="166dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="95dp"
         android:background="@drawable/workout_animation"
+        android:clickable="true"
+        android:onClick="onClickMap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stopButton" />
 
@@ -93,10 +95,10 @@
         android:layout_height="113dp"
         android:layout_marginStart="41dp"
         android:layout_marginLeft="41dp"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="80dp"
         android:background="@color/colorAccent"
         android:onClick="onClickStop"
-        android:text="STOP"
+        android:text="End"
         android:textSize="48sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -155,21 +157,17 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/testButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="302dp"
-        android:layout_marginLeft="302dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="21dp"
-        android:layout_marginBottom="11dp"
-        android:onClick="onClickTest"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/stopButton"
+    <ImageView
+        android:id="@+id/mapButton"
+        android:layout_width="166dp"
+        android:layout_height="166dp"
+        android:layout_marginTop="95dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:clickable="true"
+        android:onClick="onClickMap"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/stopButton"
+        app:srcCompat="@mipmap/map_yellow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

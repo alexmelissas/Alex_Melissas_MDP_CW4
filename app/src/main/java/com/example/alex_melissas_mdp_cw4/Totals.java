@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -32,15 +33,80 @@ public class Totals extends AppCompatActivity {
         readCalculateTotals(null,null);
     }
 
-    //maybe savestate shit for current projection/selection/args etc?
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("timeFilter", timeFilter);
+        outState.putString("typeFilter", typeFilter);
+    }
+
+    // Restore the filters
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void onRestoreInstanceState(Bundle inState) {
+        super.onRestoreInstanceState(inState);
+
+        timeFilter = inState.getString("timeFilter");
+        typeFilter = inState.getString("typeFilter");
+
+        View timeView = ((RadioButton)findViewById(R.id.todayRadioT));
+        View  typeView = ((RadioButton)findViewById(R.id.allTypeRadioT));
+
+        ((RadioButton)findViewById(R.id.todayRadioT)).setChecked(true);
+        ((RadioButton)findViewById(R.id.allTypeRadioT)).setChecked(true);
+
+        switch(timeFilter){
+            case "today":
+                ((RadioButton)findViewById(R.id.todayRadioT)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.todayRadioT));
+                break;
+            case "week":
+                ((RadioButton)findViewById(R.id.weekRadioT)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.weekRadioT));
+                break;
+            case "month":
+                ((RadioButton)findViewById(R.id.monthRadioT)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.monthRadioT));
+                break;
+            case "year":
+                ((RadioButton)findViewById(R.id.yearRadioT)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.yearRadioT));
+                break;
+            case "alltime":
+                ((RadioButton)findViewById(R.id.allTimeRadioT)).setChecked(true);
+                timeView = ((RadioButton)findViewById(R.id.allTimeRadioT));
+                break;
+        }
+
+        switch(typeFilter){
+            case "-1":
+                ((RadioButton)findViewById(R.id.allTypeRadioT)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.allTypeRadioT));
+                break;
+            case "0":
+                ((RadioButton)findViewById(R.id.walkRadioT)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.walkRadioT));
+                break;
+            case "1":
+                ((RadioButton)findViewById(R.id.jogRadioT)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.jogRadioT));
+                break;
+            case "2":
+                ((RadioButton)findViewById(R.id.runRadioT)).setChecked(true);
+                typeView = ((RadioButton)findViewById(R.id.runRadioT));
+                break;
+        }
+
+        clickTimeFilter(timeView);
+        clickTypeFilter(typeView);
+        querySelections();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    protected void onResume() {
-        setTypeFilter(findViewById(R.id.allTypeRadioT));
-        setTimeFilter(findViewById(R.id.todayRadioT));
-        readCalculateTotals(null,null);
-        super.onResume();
-    }
+    public void clickTimeFilter(View v) { setTimeFilter(v); querySelections(); }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void clickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
 
     // Calculate total distance, duration and speed values from specified query rows
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -66,27 +132,6 @@ public class Totals extends AppCompatActivity {
         ((TextView)findViewById(R.id.speedTotalText)).setText(String.format("%.2f",totalSpeedAvg)+"km/h");
     }
 
-    // Convert raw seconds int to hh:mm:ss format string
-    private String secToDuration(int sec){
-        int hours = sec/3600;
-        int mins = (sec-hours*3600)/60;
-        int secs = (sec-hours*3600)%60;
-        return String.format("%2d",hours)+":"+String.format("%02d",mins)+":"+String.format("%02d",secs);
-    }
-
-    // PUT WITH SAVESTATE SHIT
-
-//    private void updateFromRadios(){
-//
-//        switch(timeFilter){
-//            case "today": ((RadioButton)findViewById(R.id.todayRadio)).setChecked(true); break;
-//            case "week": ((RadioButton)findViewById(R.id.weekRadio)).setChecked(true); break;
-//            case "month": ((RadioButton)findViewById(R.id.monthRadio)).setChecked(true); break;
-//            case "year": ((RadioButton)findViewById(R.id.yearRadio)).setChecked(true); break;
-//            case "alltime": ((RadioButton)findViewById(R.id.allTimeRadio)).setChecked(true); break;
-//        }
-//    }
-
     //Shape the query selection and arguments according to selected time/workout type filters
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void querySelections() {
@@ -111,12 +156,6 @@ public class Totals extends AppCompatActivity {
 
         readCalculateTotals(selection,selectionArgs);
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTimeFilter(View v) { setTimeFilter(v); querySelections(); }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void clickTypeFilter(View v) { setTypeFilter(v); querySelections(); }
 
     // Set time filter based on selected radio
     private void setTimeFilter(View v){
@@ -174,6 +213,14 @@ public class Totals extends AppCompatActivity {
                 null,null,null,null);
         c.moveToFirst();
         return c.getInt(0);
+    }
+
+    // Convert raw seconds int to hh:mm:ss format string
+    private String secToDuration(int sec){
+        int hours = sec/3600;
+        int mins = (sec-hours*3600)/60;
+        int secs = (sec-hours*3600)%60;
+        return String.format("%2d",hours)+":"+String.format("%02d",mins)+":"+String.format("%02d",secs);
     }
 
 }

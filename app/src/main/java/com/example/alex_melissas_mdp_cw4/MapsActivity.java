@@ -2,7 +2,6 @@ package com.example.alex_melissas_mdp_cw4;
 
 import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,17 +42,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        Marker marker1 = null;
-        Marker marker2 = null;
+        Marker startMarker;
+        Marker endMarker = null;
 
-        marker1 = this.googleMap.addMarker(new MarkerOptions()
+        startMarker = this.googleMap.addMarker(new MarkerOptions()
                 .position(pin1)
                 .title("Start Point")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
         );
 
         if(currentOrPast ==1){
-            marker2 = this.googleMap.addMarker(new MarkerOptions()
+            endMarker = this.googleMap.addMarker(new MarkerOptions()
                     .position(pin2)
                     .title("End Point")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
@@ -61,8 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else this.googleMap.setMyLocationEnabled(true);
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(marker1.getPosition());
-        if(currentOrPast==1) builder.include(marker2.getPosition());
+        builder.include(startMarker.getPosition());
+        if(currentOrPast==1) builder.include(endMarker.getPosition());
         LatLngBounds bounds = builder.build();
 
         int activityHeight = this.getWindow().getDecorView().getHeight();

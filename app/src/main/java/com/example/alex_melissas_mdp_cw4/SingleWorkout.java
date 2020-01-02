@@ -245,8 +245,6 @@ public class SingleWorkout extends AppCompatActivity {
         mapIntent.putExtra("pin1", startLocation);
         mapIntent.putExtra("pin2", endLocation);
         mapIntent.putExtra("currentOrPast", 1);
-        mapIntent.putExtra("whoCalled", "SingleWorkout");
-        mapIntent.putExtra("workout_id", workout_id);
         startActivity(mapIntent);
     }
 

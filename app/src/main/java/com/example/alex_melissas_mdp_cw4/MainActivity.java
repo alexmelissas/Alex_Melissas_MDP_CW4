@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         requestPermissions();
         readRecent();
         super.onResume();
@@ -180,14 +179,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickRecords(View v){startActivity(new Intent(MainActivity.this, Totals.class));}
 
-    //TEST
+    //Open map with start point and current location
     public void onClickMap(View v){
         double[] currentCoords = MyLocationTracker.requestLocationTracker().getCurrentCoords();
         LatLng currentLocation = new LatLng(currentCoords[0],currentCoords[1]);
         Intent mapIntent = new Intent(MainActivity.this, MapsActivity.class);
         mapIntent.putExtra("pin1", currentLocation);
         mapIntent.putExtra("currentOrPast", 0);
-        mapIntent.putExtra("whoCalled", "MainActivity");
         startActivity(mapIntent);
     }
 
